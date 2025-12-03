@@ -3,7 +3,7 @@
 ![Foundry v13 Compatible](https://img.shields.io/badge/Foundry-v13-brightgreen)
 ![Foundry v12 Compatible](https://img.shields.io/badge/Foundry-v12-green)
 ![License](https://img.shields.io/badge/License-GPLv3-blue)
-![Version](https://img.shields.io/badge/Version-1.0.0-orange)
+![Version](https://img.shields.io/badge/Version-1.0.1-orange)
 [![Patreon](https://img.shields.io/badge/Support-Patreon-ff424d?logo=patreon)](https://www.patreon.com/PhilsModules)
 
 **Phil's Pf2e Ai Translator** allows you to translate entire Journals in Foundry VTT using modern AI (Google Gemini, ChatGPT, Claude, Copilot, Perplexity).
