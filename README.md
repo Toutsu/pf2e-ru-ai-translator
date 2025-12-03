@@ -19,6 +19,7 @@ The module acts as an intelligent "Prompt Engineer". It prepares the text from y
 * **Smart Paste:** Automatically finds and extracts the JSON code block from the AI response.
 * **Official Translation Integration:** Checks the installed German Pathfinder 2e system module for existing translations to ensure consistency with official terms.
 * **Context-Aware:** Preserves HTML formatting and links safely.
+* **Safety First:** Automatically creates a **Backup** (Copy) of your Journal before applying changes.
 
 ## 📦 Installation
 
@@ -55,6 +56,7 @@ Phil's Pf2e Ai Translator verbindet deine Foundry VTT Welt mit der Power moderne
 * **Smart Paste:** Du kannst die gesamte Antwort der KI kopieren. Das Modul filtert automatisch den JSON-Code heraus.
 * **Offizielle Übersetzung:** Prüft das installierte deutsche Pathfinder 2e System-Modul auf existierende Übersetzungen, um Konsistenz mit offiziellen Begriffen zu garantieren.
 * **Sicher:** HTML-Formatierungen und Links bleiben erhalten.
+* **Safety First:** Erstellt automatisch ein **Backup** (Kopie) deines Journals, bevor Änderungen angewendet werden.
 
 ## 📦 Installation
 
