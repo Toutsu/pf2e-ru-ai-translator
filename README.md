@@ -79,6 +79,12 @@ Phil's Pf2e Ai Translator verbindet deine Foundry VTT Welt mit der Power moderne
 
 ---
 
+## 👨‍💻 Author
+* **Phil** (GitHub: [PhilsModules](https://github.com/PhilsModules))
+
+## 📄 License
+This module is licensed under the [GPL-3.0 License](LICENSE).
+
 ## ❤️ Support the Development
 If you enjoy this module and want to support open-source development for Foundry VTT, check out my Patreon!
 
@@ -87,6 +93,9 @@ Gefällt dir das Modul? Unterstütze die Weiterentwicklung auf Patreon!
 [**Become a Patron**](https://www.patreon.com/PhilsModules)
 
 ---
-
-**Made with ❤️ for the Foundry VTT Community by [PhilsModules](https://github.com/PhilsModules)**
-*Licensed under GPL-3.0*
+<div align="center">
+    <p>Made with ❤️ for the Foundry VTT Community</p>
+    <a href="https://www.patreon.com/PhilsModules">
+        <img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patron" />
+    </a>
+</div>
