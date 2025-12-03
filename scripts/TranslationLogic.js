@@ -29,11 +29,39 @@ export function resolvePrompt(key, data) {
 }
 
 export async function injectOfficialTranslations(docData) {
-    const dictionary = await DictionaryLoader.loadOfficialTranslations();
-    if (!dictionary || Object.keys(dictionary).length === 0) return docData;
+    // 1. Load Official Translations
+    const officialDictionary = await DictionaryLoader.loadOfficialTranslations();
+
+    // 2. Load User Glossary Terms
+    let glossaryDictionary = {};
+    const glossaryJournal = game.journal.find(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+    if (glossaryJournal) {
+        const page = glossaryJournal.pages.find(p => p.type === "text");
+        if (page && page.text?.content) {
+            const terms = extractTermsFromHtml(page.text.content);
+            terms.forEach(t => {
+                // Glossary terms overwrite official terms if they exist
+                glossaryDictionary[t.original] = t.translation;
+            });
+        }
+    }
+
+    // 3. Merge Dictionaries (Glossary > Official)
+    // We start with official, then overwrite with glossary
+    const dictionary = { ...officialDictionary, ...glossaryDictionary };
+
+    if (!dictionary || Object.keys(dictionary).length === 0) return { docData, replacedTerms: [] };
+
+    const allReplacedTerms = new Map();
 
     // Helper to process text recursively or specific fields
-    const processContent = (text) => TermReplacer.replaceTerms(text, dictionary);
+    const processContent = (text) => {
+        const result = TermReplacer.replaceTerms(text, dictionary);
+        if (result.replaced) {
+            result.replaced.forEach(item => allReplacedTerms.set(item.original, item.translation));
+        }
+        return result.text;
+    };
 
     // Process 'name'
     if (docData.name) {
@@ -55,7 +83,8 @@ export async function injectOfficialTranslations(docData) {
         docData.system.description.value = processContent(docData.system.description.value);
     }
 
-    return docData;
+    const replacedTermsList = Array.from(allReplacedTerms.entries()).map(([original, translation]) => ({ original, translation }));
+    return { docData, replacedTerms: replacedTermsList };
 }
 
 export function getCleanData(doc, sendFull, allowedPageIds = null) {
@@ -203,11 +232,16 @@ export async function processUpdate(doc, rawText) {
             delete jsonData._id;
 
             if (doc.documentName === "JournalEntry" && jsonData.pages && jsonData.name !== "AI Glossary") {
-                try {
-                    await doc.clone({ name: `${doc.name} (Backup)` }, { save: true });
-                    ui.notifications.info(loc('BackupCreated', { name: doc.name }) || `Backup created: "${doc.name} (Backup)"`);
-                } catch (err) {
-                    console.warn("Backup creation failed:", err);
+                const backupName = `${doc.name} (Backup)`;
+                const existingBackup = game.journal.find(j => j.name === backupName);
+
+                if (!existingBackup) {
+                    try {
+                        await doc.clone({ name: backupName }, { save: true });
+                        ui.notifications.info(loc('BackupCreated', { name: doc.name }) || `Backup created: "${doc.name} (Backup)"`);
+                    } catch (err) {
+                        console.warn("Backup creation failed:", err);
+                    }
                 }
             }
 

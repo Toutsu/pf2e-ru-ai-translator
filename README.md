@@ -1,25 +1,38 @@
-# Phil's Pf2e Ai Translator 📖
+![Foundry v12](https://img.shields.io/badge/foundry-v12-green)
+![Version](https://img.shields.io/badge/version-1.1.2-blue)
 
-![Foundry v13 Compatible](https://img.shields.io/badge/Foundry-v13-brightgreen)
-![Foundry v12 Compatible](https://img.shields.io/badge/Foundry-v12-green)
-![License](https://img.shields.io/badge/License-GPLv3-blue)
-![Version](https://img.shields.io/badge/Version-1.0.3-orange)
-[![Patreon](https://img.shields.io/badge/Support-Patreon-ff424d?logo=patreon)](https://www.patreon.com/PhilsModules)
+# Phil's PF2e AI Translator
 
-**Phil's Pf2e Ai Translator** allows you to translate entire Journals in Foundry VTT using modern AI (Google Gemini, ChatGPT, Claude, Copilot, Perplexity).
+**Automatisierte Übersetzung von Foundry VTT Journalen mit KI (ChatGPT, Claude, Gemini, etc.)**
 
-## Changelog
-**v1.0.3**
-*   **Bugfix:** Fixed a critical `TypeError` during module initialization where global variables (`game`, `ui`, etc.) were accessed before they were defined.
-*   **Improvement:** Enhanced stability of the translation dialog startup.
+Dieses Modul hilft dir, **große Abenteuer-Module** oder lange Texte in Foundry VTT schnell und konsistent zu übersetzen. Es ist speziell für **PF2e** optimiert, funktioniert aber auch systemunabhängig.
 
-**v1.0.2**
-*   **Feature:** Added support for multiple AI providers (Gemini, ChatGPT, Claude, Copilot, Perplexity).
-*   **Feature:** Added Glossary support for consistent terminology.
-*   **Feature:** Added Batch Translation for multiple pages.
+---
 
-The core feature: **You don't need expensive API keys!**
-The module acts as an intelligent "Prompt Engineer". It prepares the text from your Journal pages, creates the perfect prompt for the AI, and you simply copy it into the chat window of your favorite AI service.
+## 🚀 Features (v1.1.2 Update)
+
+*   **NEU: Smarter Backup:**
+    *   Das Modul erstellt nun **keine doppelten Backups** mehr. Wenn bereits ein Backup existiert (z.B. "Kapitel 1 (Backup)"), wird dieses behalten und kein neues erstellt. Das verhindert, dass dein Journal-Ordner zugemüllt wird, wenn du Batch-Übersetzungen machst.
+    *   Das Backup repräsentiert somit immer den **Originalzustand** vor der allerersten Übersetzung.
+*   **NEU: Auto-Next-Batch Fix & Skip Button:**
+    *   Der automatische Workflow für große Journale ("Nächster Batch") wurde verbessert und ist nun zuverlässiger.
+    *   Ein neuer **"Überspringen / Weiter"** Button im Glossar-Dialog erlaubt es, den Glossar-Schritt zu überspringen und direkt mit dem nächsten Batch fortzufahren.
+*   **NEU: Glossar Priorität:**
+    *   Begriffe aus deinem `AI Glossary` haben nun **Vorrang** vor offiziellen Systemübersetzungen. Das gibt dir volle Kontrolle über spezifische Namen und Begriffe.
+*   **NEU: Auto-Next-Batch Workflow:**
+    *   Übersetzt du ein langes Journal? Das Modul öffnet nach jedem Batch automatisch das Fenster für die nächsten 10 Seiten. Kein manuelles Klicken mehr!
+*   **Smart Warnings:**
+    *   Warnt dich, wenn du noch kein Glossar hast, bevor du eine Übersetzung startest.
+*   **Kontext-Awareness:**
+    *   Lädt automatisch offizielle Übersetzungen (Skills, Conditions, etc.) aus dem PF2e-System und weist die KI an, diese zu nutzen.
+*   **Glossar-Integration:**
+    *   Erstellt und pflegt ein `AI Glossary` Journal. Die KI nutzt dieses Glossar für konsistente Namen über alle Texte hinweg.
+*   **Batch-Verarbeitung:**
+    *   Wählt automatisch immer 10 Seiten auf einmal aus, um Context-Limits der KI nicht zu sprengen.
+*   **Multi-Provider Support:**
+    *   Bereitet Prompts vor für: **ChatGPT, Claude, Gemini, Copilot, Perplexity**.
+
+---
 
 ## 🚀 Key Features
 

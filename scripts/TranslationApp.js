@@ -210,6 +210,37 @@ export class TranslationDialog {
                         let selectedPageIds = [];
                         html.find('.page-selector:checked').each((i, el) => selectedPageIds.push($(el).val()));
 
+                        // Check if Glossary exists
+                        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+
+                        if (!glossaryExists && !onlyNames) {
+                            // Warn user and suggest creating glossary first
+                            new Dialog({
+                                title: loc('TitleNoGlossary') || "No Glossary Found",
+                                content: `<p>${loc('WarnNoGlossary') || "No 'AI Glossary' found. It is recommended to generate a glossary first to ensure consistent names."}</p>`,
+                                buttons: {
+                                    generate: {
+                                        label: loc('BtnGenGlossaryFirst') || "Generate Glossary First",
+                                        icon: '<i class="fas fa-book"></i>',
+                                        callback: () => {
+                                            // Switch to glossary mode logic
+                                            let finalUserPrompt = prompt + " [IMPORTANT: Analyze/Translate ONLY proper names, places. Ignore body text.]";
+                                            prepareGlossaryGenPrompt(doc, finalUserPrompt, systemName, false, url, selectedPageIds);
+                                        }
+                                    },
+                                    proceed: {
+                                        label: loc('BtnProceedAnyway') || "Proceed Anyway",
+                                        icon: '<i class="fas fa-arrow-right"></i>',
+                                        callback: () => {
+                                            prepareTranslatePrompt(doc, prompt, systemName, false, url, selectedPageIds);
+                                        }
+                                    }
+                                },
+                                default: "generate"
+                            }).render(true);
+                            return;
+                        }
+
                         let finalUserPrompt = prompt;
                         if (onlyNames) finalUserPrompt += " [IMPORTANT: Analyze/Translate ONLY proper names, places. Ignore body text.]";
 
@@ -276,14 +307,19 @@ export class TranslationDialog {
 
 async function prepareTranslatePrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null) {
     const cleanData = getCleanData(doc, sendFull, selectedPages);
-    const translatedData = await injectOfficialTranslations(cleanData);
+    const { docData: translatedData, replacedTerms } = await injectOfficialTranslations(cleanData);
     const jsonString = JSON.stringify(translatedData, null, 2);
     const glossaryContent = getGlossaryContent();
     let promptKey = "TranslateAndCreateGlossary";
     if (glossaryContent && glossaryContent.length > 10) promptKey = "TranslateWithGlossary";
 
+    let replacedTermsList = "";
+    if (replacedTerms && replacedTerms.length > 0) {
+        replacedTermsList = replacedTerms.map(t => `- ${t.original} -> ${t.translation}`).join("\n");
+    }
+
     const defaultPrompt = loc('DefaultTranslate') || "Translate.";
-    const finalPrompt = resolvePrompt(promptKey, { systemName, jsonString, userPrompt: userPrompt || defaultPrompt, glossaryContent: glossaryContent || "" });
+    const finalPrompt = resolvePrompt(promptKey, { systemName, jsonString, userPrompt: userPrompt || defaultPrompt, glossaryContent: glossaryContent || "", replacedTermsList });
     const expectGlossaryCreation = (promptKey === "TranslateAndCreateGlossary");
     const expectGlossaryUpdate = (promptKey === "TranslateWithGlossary");
     copyAndOpen(finalPrompt, doc, true, targetUrl, expectGlossaryCreation, expectGlossaryUpdate, false);
@@ -294,11 +330,17 @@ async function prepareGlossaryGenPrompt(doc, userPrompt, systemName, sendFull, t
 
     // Inject official translations so the AI sees the "German" version of known terms
     // and doesn't suggest them as new glossary items.
-    await injectOfficialTranslations(cleanData);
+    const { docData: translatedData, replacedTerms } = await injectOfficialTranslations(cleanData);
 
-    const textContent = getContextDescription(doc, cleanData);
+    const textContent = getContextDescription(doc, translatedData);
+
+    let replacedTermsList = "";
+    if (replacedTerms && replacedTerms.length > 0) {
+        replacedTermsList = replacedTerms.map(t => `- ${t.original} -> ${t.translation}`).join("\n");
+    }
+
     const defaultPrompt = loc('DefaultGlossary') || "Create a list of important terms.";
-    const finalPrompt = resolvePrompt("GenerateGlossary", { systemName, docDesc: textContent, userPrompt: userPrompt || defaultPrompt });
+    const finalPrompt = resolvePrompt("GenerateGlossary", { systemName, docDesc: textContent, userPrompt: userPrompt || defaultPrompt, replacedTermsList });
     copyAndOpen(finalPrompt, doc, true, targetUrl, false, false, true);
 }
 
@@ -340,56 +382,88 @@ export function showResultDialog(doc, initialContent = "", errorMsg = null, expe
         <textarea name="aiResponse" style="width:100%; height: 300px;" placeholder="${placeholderText}">${initialContent}</textarea>
     </div>`;
 
-    new Dialog({
-        title: title, content: content,
-        buttons: {
-            update: {
-                label: btnLabel,
-                callback: async (html) => {
-                    const text = html.find('[name="aiResponse"]').val();
-                    if (text) {
-                        // STRICT FAILSAFE:
-                        // 1. Translation Mode: MUST NOT contain "name": "AI Glossary"
-                        if (!isGlossaryMode && (text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"'))) {
-                            const errorText = loc('ErrorGlossaryInTranslation') || "Error: It looks like you pasted the Glossary JSON here. Please paste ONLY the Translation JSON.";
-                            ui.notifications.error(errorText);
-                            showResultDialog(doc, text, errorText, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode);
-                            return;
+    const buttons = {
+        update: {
+            label: btnLabel,
+            callback: async (html) => {
+                const text = html.find('[name="aiResponse"]').val();
+                if (text) {
+                    // STRICT FAILSAFE:
+                    // 1. Translation Mode: MUST NOT contain "name": "AI Glossary"
+                    if (!isGlossaryMode && (text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"'))) {
+                        const errorText = loc('ErrorGlossaryInTranslation') || "Error: It looks like you pasted the Glossary JSON here. Please paste ONLY the Translation JSON.";
+                        ui.notifications.error(errorText);
+                        showResultDialog(doc, text, errorText, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode);
+                        return;
+                    }
+
+                    // 2. Glossary Mode: MUST contain "name": "AI Glossary"
+                    if (isGlossaryMode && !(text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"'))) {
+                        const errorText = loc('ErrorInvalidGlossaryJson') || "Error: This does not look like the Glossary JSON. Please paste the Glossary JSON block.";
+                        ui.notifications.error(errorText);
+                        showResultDialog(doc, text, errorText, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode);
+                        return;
+                    }
+
+                    const result = await processUpdate(doc, text);
+
+                    if (typeof result === 'string') {
+                        showResultDialog(doc, text, result, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode);
+                    } else if (result === true || result.success) {
+                        // Success
+
+                        // Check for new glossary items
+                        if (result.newGlossaryItems && result.newGlossaryItems.length > 0) {
+                            showGlossaryUpdateDialog(result.newGlossaryItems);
                         }
 
-                        // 2. Glossary Mode: MUST contain "name": "AI Glossary"
-                        if (isGlossaryMode && !(text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"'))) {
-                            const errorText = loc('ErrorInvalidGlossaryJson') || "Error: This does not look like the Glossary JSON. Please paste the Glossary JSON block.";
-                            ui.notifications.error(errorText);
-                            showResultDialog(doc, text, errorText, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode);
-                            return;
+                        // CHAINING: If we expect a glossary update/creation, open the Glossary Dialog next
+                        if ((expectGlossaryCreation || expectGlossaryUpdate) && !isGlossaryMode) {
+                            setTimeout(() => {
+                                showResultDialog(doc, "", null, false, false, true);
+                            }, 500);
+                            return; // Wait for glossary step to finish before checking next batch
                         }
 
-                        const result = await processUpdate(doc, text);
-
-                        if (typeof result === 'string') {
-                            showResultDialog(doc, text, result, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode);
-                        } else if (result === true || result.success) {
-                            // Success
-
-                            // Check for new glossary items
-                            if (result.newGlossaryItems && result.newGlossaryItems.length > 0) {
-                                showGlossaryUpdateDialog(result.newGlossaryItems);
-                            }
-
-                            // CHAINING: If we expect a glossary update/creation, open the Glossary Dialog next
-                            if ((expectGlossaryCreation || expectGlossaryUpdate) && !isGlossaryMode) {
-                                setTimeout(() => {
-                                    showResultDialog(doc, "", null, false, false, true);
-                                }, 500);
-                            }
-                        }
+                        // AUTO-NEXT-BATCH
+                        checkNextBatch(doc);
                     }
                 }
             }
-        },
+        }
+    };
+
+    if (isGlossaryMode) {
+        buttons.skip = {
+            label: loc('BtnSkip') || "Skip / Next",
+            icon: '<i class="fas fa-forward"></i>',
+            callback: () => {
+                checkNextBatch(doc);
+            }
+        };
+    }
+
+    new Dialog({
+        title: title, content: content,
+        buttons: buttons,
         default: "update"
     }).render(true);
+}
+
+function checkNextBatch(doc) {
+    setTimeout(() => {
+        const freshDoc = game.journal.get(doc.id);
+        if (freshDoc && freshDoc.documentName === "JournalEntry") {
+            const hasMore = freshDoc.pages.some(p => !p.getFlag(MODULE_ID, 'aiProcessed'));
+            console.log(`AI Assistant | Check Next Batch: ${hasMore} (Pages: ${freshDoc.pages.size})`);
+            if (hasMore) {
+                ui.notifications.info(loc('InfoNextBatch') || "Opening next batch...");
+                setTimeout(() => {
+                    new TranslationDialog(freshDoc).render(true);
+                }, 500);
+            }
+        }
+    }, 1000); // Wait 1s for updates to propagate
 }
 
 function showGlossaryUpdateDialog(newItems) {

@@ -37,9 +37,13 @@ export class DictionaryLoader {
                                 } else if (typeof valEn === 'string' && typeof valDe === 'string') {
                                     // Filter out long sentences, IDs, or identical values
                                     if (valEn.length > 2 && valEn.length < 50 && valEn !== valDe) {
-                                        // Avoid replacing variables like {0} or HTML
+                                        // Avoid replacing variables like {0} or HTML in keys
                                         if (!valEn.includes("{") && !valEn.includes("<")) {
-                                            dictionary[valEn] = valDe;
+                                            // Strip HTML from the translation value (valDe)
+                                            const cleanValDe = valDe.replace(/<[^>]*>/g, "");
+                                            if (cleanValDe) {
+                                                dictionary[valEn] = cleanValDe;
+                                            }
                                         }
                                     }
                                 }
@@ -104,7 +108,9 @@ export class DictionaryLoader {
                 "Name", "Description", "Source", "Type", "Traits", "Rarity", "Price", "Usage", "Bulk",
                 "Stride", "Strike", "Step", "Interact", "Drop", "Leap", "Escape", "Seek",
                 // Generic terms that are also Conditions/Attitudes but shouldn't be auto-replaced
-                "Hidden", "Observed", "Concealed", "Friendly", "Helpful", "Hostile", "Indifferent", "Unfriendly"
+                "Hidden", "Observed", "Concealed", "Friendly", "Helpful", "Hostile", "Indifferent", "Unfriendly",
+                // Common UI/Text terms that cause "Denglisch"
+                "Items", "Item", "Treasure", "Consumable", "Permanent", "Chapter", "Hero", "Heroes", "Student", "Students", "Inventory", "Details"
             ]);
 
             for (const file of files) {
@@ -122,7 +128,11 @@ export class DictionaryLoader {
                             if (value.name && key !== value.name) {
                                 if (blockedTerms.has(key)) continue;
                                 if (key.length <= 2) continue;
-                                dictionary[key] = value.name;
+                                // Strip HTML from value
+                                const cleanValue = value.name.replace(/<[^>]*>/g, "");
+                                if (cleanValue) {
+                                    dictionary[key] = cleanValue;
+                                }
                             }
                         }
                     }
