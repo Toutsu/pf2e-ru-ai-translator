@@ -450,21 +450,21 @@ export function showResultDialog(doc, initialContent = "", errorMsg = null, expe
                     } else if (result === true || result.success) {
                         // Success
 
-                        // Check for new glossary items
-                        if (result.newGlossaryItems && result.newGlossaryItems.length > 0) {
-                            showGlossaryUpdateDialog(result.newGlossaryItems);
-                        }
-
                         // CHAINING: If we expect a glossary update/creation, open the Glossary Dialog next
-                        if ((expectGlossaryCreation || expectGlossaryUpdate) && !isGlossaryMode) {
+                        // BUT ONLY if we haven't already found/processed glossary items in this step.
+                        const glossaryHandled = (result.newGlossaryItems && result.newGlossaryItems.length > 0);
+                        const willOpenGlossaryDialog = (expectGlossaryCreation || expectGlossaryUpdate) && !isGlossaryMode && !glossaryHandled;
+
+                        if (glossaryHandled) {
+                            showGlossaryUpdateDialog(result.newGlossaryItems, doc);
+                        } else if (willOpenGlossaryDialog) {
                             setTimeout(() => {
                                 showResultDialog(doc, "", null, false, false, true);
                             }, 500);
-                            return; // Wait for glossary step to finish before checking next batch
+                        } else {
+                            // AUTO-NEXT-BATCH (Only if no glossary dialog is shown)
+                            checkNextBatch(doc);
                         }
-
-                        // AUTO-NEXT-BATCH
-                        checkNextBatch(doc);
                     }
                 }
             }
@@ -504,7 +504,7 @@ function checkNextBatch(doc) {
     }, 1000); // Wait 1s for updates to propagate
 }
 
-function showGlossaryUpdateDialog(newItems) {
+function showGlossaryUpdateDialog(newItems, doc) {
     let itemsHtml = "<ul>";
     newItems.forEach(item => {
         itemsHtml += `<li><b>${item.original}</b> = ${item.translation}</li>`;
@@ -526,13 +526,18 @@ function showGlossaryUpdateDialog(newItems) {
                 icon: '<i class="fas fa-plus"></i>',
                 callback: async () => {
                     await addToGlossary(newItems);
+                    checkNextBatch(doc);
                 }
             },
             cancel: {
                 label: loc('BtnCancel') || "Cancel",
-                icon: '<i class="fas fa-times"></i>'
+                icon: '<i class="fas fa-times"></i>',
+                callback: () => {
+                    checkNextBatch(doc);
+                }
             }
         },
         default: "add"
     }).render(true);
 }
+

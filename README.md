@@ -1,9 +1,8 @@
 ![Foundry v13 Compatible](https://img.shields.io/badge/Foundry-v13-brightgreen)
 ![Foundry v12 Compatible](https://img.shields.io/badge/Foundry-v12-green)
 ![License](https://img.shields.io/badge/License-GPLv3-blue)
-![Version](https://img.shields.io/badge/Version-1.1.4-orange)
+![Version](https://img.shields.io/badge/Version-1.1.5-orange)
 [![Patreon](https://img.shields.io/badge/Support-Patreon-ff424d?logo=patreon)](https://www.patreon.com/PhilsModules)
-
 # Phil's PF2e AI Translator
 
 **Automatisierte Übersetzung von Foundry VTT Journalen mit KI (ChatGPT, Claude, Gemini, etc.)**
@@ -11,6 +10,13 @@
 Dieses Modul hilft dir, **große Abenteuer-Module** oder lange Texte in Foundry VTT schnell und konsistent zu übersetzen. Es ist speziell für **PF2e** optimiert, funktioniert aber auch systemunabhängig.
 
 ---
+
+## 🚀 Features (v1.1.5 Update)
+
+*   **BUGFIX: Dialog-Reihenfolge:**
+    *   Ein Fehler wurde behoben, bei dem das "Nächster Batch"-Fenster gleichzeitig mit dem "Glossar Update"-Fenster geöffnet wurde. Die Dialoge erscheinen nun korrekt nacheinander.
+*   **BUGFIX: Syntax Error:**
+    *   Ein kritischer Syntax-Fehler (`Declaration or statement expected`) wurde behoben, der das Modul unbenutzbar machte.
 
 ## 🚀 Features (v1.1.4 Update)
 
@@ -141,4 +147,3 @@ This module is licensed under the [GPL-3.0 License](LICENSE).
     </a>
     <p>Made with ❤️ for the Foundry VTT Community</p>
 </div>
-
