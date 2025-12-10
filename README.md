@@ -20,7 +20,6 @@
 <a href="#-deutsche-anleitung"><img src="https://img.shields.io/badge/%20-Deutsche_Anleitung-black?style=for-the-badge&logo=germany&logoColor=red" alt="Deutsche Anleitung"></a> <a href="#-english-instructions"><img src="https://img.shields.io/badge/%20-English_Instructions-black?style=for-the-badge&logo=united-kingdom&logoColor=white" alt="English Instructions"></a>
 
 </div>
----
 
 > [!CAUTION]
 > ### ⚖️ Private Use Only / Nur für den privaten Gebrauch
@@ -36,7 +35,6 @@
 > **Deutsch:** Das Konzept und der Workflow dieses Moduls wurden von **Jan Wagner (Primetide), Head of Digital bei Ulisses Spiele**, geprüft und freigegeben.
 > Es wurde bestätigt, dass dieser technische Ansatz (Mapping bestehender Glossar-Begriffe für den privaten Gebrauch) den Community-Richtlinien entspricht und das geistige Eigentum von **Ulisses Spiele** und **Paizo** respektiert.
 
----
 
 # <img src="https://flagcdn.com/48x36/de.png" width="28" height="21" alt="DE"> Deutsche Anleitung
 
@@ -85,7 +83,6 @@ Phil's Pf2e Ai Translator verbindet deine Foundry VTT Welt mit der Power moderne
 4.  **Update**: In Foundry einfügen -> **"Journal aktualisieren"**.
 5.  **Konfliktlösung**: Wenn die KI geschützte Begriffe ändern will (z.B. "Feuerball" -> "Flammenkugel"), erscheint ein Warndialog. Du entscheidest: Original behalten oder Änderung akzeptieren?
 
----
 
 # <img src="https://flagcdn.com/48x36/gb.png" width="28" height="21" alt="EN"> English Instructions
 
@@ -118,7 +115,6 @@ This module helps you to translate **large adventure modules** or long texts in 
 4.  **Update**: Paste into Foundry -> **"Update Journal"**.
 5.  **Conflict Resolution**: If the AI tries to change protected terms, a warning dialog appears. You decide: Keep Original or Accept Change?
 
----
 
 # ⚖️ Credits & Licenses
 
@@ -141,7 +137,6 @@ Portions of this module utilize data from the [Pathfinder German Translation mod
 ## Module License
 **Phil's PF2e AI Translator** is licensed under the [GPL-3.0 License](LICENSE).
 
----
 
 <div align="center">
     <h2>❤️ Support the Development</h2>
@@ -153,3 +148,4 @@ Portions of this module utilize data from the [Pathfinder German Translation mod
     <br><br>
     <p><i>Made with ❤️ for the Foundry VTT Community</i></p>
 </div>
+
