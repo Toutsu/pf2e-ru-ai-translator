@@ -18,7 +18,7 @@ Dieses Modul hilft dir, **große Abenteuer-Module** oder lange Texte in Foundry 
 >## Credits & Licenses
 >
 >### Pathfinder German Translation Data
->Portions of this module utilize data from the Pathfinder German Translation module by Marco Seither.
+>Portions of this module utilize data from the [Pathfinder German Translation module](https://github.com/Foundry-VTT-PF2-German/lang-de-pf2e) by Marco Seither.
 >Licensed under the MIT License.
 
 > Copyright (c) 2023 Marco Seither
@@ -123,4 +123,5 @@ This module is licensed under the [GPL-3.0 License](LICENSE).
     </a>
     <p>Made with ❤️ for the Foundry VTT Community</p>
 </div>
+
 
