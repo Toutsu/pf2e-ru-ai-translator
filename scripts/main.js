@@ -37,21 +37,6 @@ Hooks.on('renderJournalDirectory', async (app, html) => {
     button.classList.add("ai-translation-btn");
     button.innerHTML = `<i class="fas fa-language"></i> ${game.i18n.localize("PHILS_PF2E_AI_TRANSLATOR.UI.Title")}`;
 
-    // Add some basic styling to the button to make it look good
-    // Removed custom styling to match Foundry VTT theme
-    // button.style.flex = "0 0 auto";
-    // button.style.width = "auto";
-    // button.style.height = "30px";
-    // button.style.lineHeight = "30px";
-    // button.style.margin = "0 0 5px";
-    // button.style.padding = "0 10px";
-    // button.style.background = "linear-gradient(90deg, #1c87e5, #8a3ab9)";
-    // button.style.color = "white";
-    // button.style.border = "1px solid #444";
-    // button.style.borderRadius = "3px";
-    // button.style.cursor = "pointer";
-    // button.style.fontSize = "13px";
-
     button.addEventListener("click", event => {
         event.preventDefault();
         new TranslationAssistant().render(true);

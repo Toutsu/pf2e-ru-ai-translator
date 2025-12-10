@@ -28,7 +28,17 @@ export function resolvePrompt(key, data) {
     return formatString(rawText, data);
 }
 
-export async function injectOfficialTranslations(docData) {
+
+
+// --- GLOBAL GLOSSARY STATE ---
+export const GLOSSARY_MAP = new Map();
+function clearGlossaryMap() {
+    GLOSSARY_MAP.clear();
+}
+// -----------------------------
+
+// Helper to load dictionary (Shared)
+async function loadDictionary() {
     // 1. Load Official Translations
     const officialDictionary = await DictionaryLoader.loadOfficialTranslations();
 
@@ -40,26 +50,97 @@ export async function injectOfficialTranslations(docData) {
         if (page && page.text?.content) {
             const terms = extractTermsFromHtml(page.text.content);
             terms.forEach(t => {
-                // Glossary terms overwrite official terms if they exist
                 glossaryDictionary[t.original] = t.translation;
             });
         }
     }
 
-    // 3. Merge Dictionaries (Glossary > Official)
-    // We start with official, then overwrite with glossary
-    const dictionary = { ...officialDictionary, ...glossaryDictionary };
+    // 3. Merge: Glossary Overwrites Official
+    return { ...officialDictionary, ...glossaryDictionary };
+}
+
+// Helper to inject markers into German text (Reverse Lookup)
+// dictionary is English -> German
+export async function injectGlossaryMarkers(docData) {
+    // reset map for new run (ALWAYS do this first to avoid stale state)
+    clearGlossaryMap();
+
+    // 1. Load Dictionary
+    const dictionary = await loadDictionary();
+    if (!dictionary || Object.keys(dictionary).length === 0) {
+        // No glossary? No problem. Just don't protect anything.
+        return docData;
+    }
+
+    // 2. Prepare Terms for Regex (sort by length desc)
+    // IMPORTANT: For Grammar Check, we are scanning GERMAN text. 
+    // The dictionary is En -> De. So we need to protect the VALUES (German terms).
+    // Also include Keys if they might appear? Usually not. Stick to Values.
+    const allGermanTerms = Object.values(dictionary);
+    // Unique them (some English terms map to same German term)
+    const uniqueTerms = [...new Set(allGermanTerms)].filter(t => t && t.length > 2); // Filter short garbage
+
+    // Sort longest first to match compound words correctly
+    const terms = uniqueTerms.sort((a, b) => b.length - a.length);
+
+    if (terms.length === 0) return docData;
+
+    let termCounter = 0;
+
+    // Escape regex special characters
+    const escapedTerms = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const regexPattern = `\\b(${escapedTerms.join("|")})\\b`;
+    const regex = new RegExp(regexPattern, "g");
+
+    const processString = (text) => {
+        if (!text) return text;
+        // Split by HTML tags to avoid replacing inside tags
+        const parts = text.split(/(<[^>]*>)/g);
+        return parts.map(part => {
+            if (part.startsWith("<")) return part;
+            return part.replace(regex, (match) => {
+                termCounter++;
+                const id = `#${termCounter}`;
+                GLOSSARY_MAP.set(id, match); // Store original
+                return `[[${id}:${match}]]`;
+            });
+        }).join("");
+    };
+
+    // Recursive helper
+    const injectInObject = (obj) => {
+        if (typeof obj === 'string') {
+            return processString(obj);
+        } else if (Array.isArray(obj)) {
+            return obj.map(item => injectInObject(item));
+        } else if (typeof obj === 'object' && obj !== null) {
+            for (const key in obj) {
+                // Skip _id and other sensitive fields
+                if (key === "_id") continue;
+                obj[key] = injectInObject(obj[key]);
+            }
+            return obj;
+        }
+        return obj;
+    };
+
+    // Create a deep copy to avoid mutating original valid data structure in memory if not intended (though we usually want to return modified data)
+    let processedData = foundry.utils.deepClone(docData);
+    processedData = injectInObject(processedData);
+
+    return processedData;
+}
+
+// Helper to inject official translations
+export async function injectOfficialTranslations(docData) {
+    const dictionary = await loadDictionary();
 
     if (!dictionary || Object.keys(dictionary).length === 0) return { docData, replacedTerms: [] };
 
-    const allReplacedTerms = new Map();
-
     // Helper to process text recursively or specific fields
     const processContent = (text) => {
-        const result = TermReplacer.replaceTerms(text, dictionary, true); // Enable appendOriginal
-        if (result.replaced) {
-            result.replaced.forEach(item => allReplacedTerms.set(item.original, item.translation));
-        }
+        // Enable appendOriginal (true)
+        const result = TermReplacer.replaceTerms(text, dictionary, true);
         return result.text;
     };
 
@@ -83,8 +164,9 @@ export async function injectOfficialTranslations(docData) {
         docData.system.description.value = processContent(docData.system.description.value);
     }
 
-    const replacedTermsList = Array.from(allReplacedTerms.entries()).map(([original, translation]) => ({ original, translation }));
-    return { docData, replacedTerms: replacedTermsList };
+    // Note: We used to collect replaced terms here, but the prompt doesn't need them anymore.
+    // The terms are now inline in the text.
+    return { docData, replacedTerms: [] };
 }
 
 export function getCleanData(doc, sendFull, allowedPageIds = null) {
@@ -232,6 +314,61 @@ export async function processUpdate(doc, rawText) {
             delete jsonData._id;
 
             // --- CLEANUP START ---
+            // 1. Check for Glossary Conflicts (Grammar Check Protection)
+            // Parse [[#ID:Term]] and compare with GLOSSARY_MAP
+            const conflicts = [];
+
+            // Helper to recursively scan for conflicts (without modifying yet)
+            const scanConflicts = (obj) => {
+                if (typeof obj === 'string') {
+                    const matches = [...obj.matchAll(/\[\[#(.*?):(.*?)\]\]/g)];
+                    for (const match of matches) {
+                        const id = `#${match[1]}`;
+                        const returnedTerm = match[2];
+                        const originalTerm = GLOSSARY_MAP.get(id);
+
+                        if (originalTerm && returnedTerm !== originalTerm) {
+                            conflicts.push({
+                                id: id,
+                                original: originalTerm,
+                                current: returnedTerm
+                            });
+                        }
+                    }
+                } else if (Array.isArray(obj)) {
+                    obj.forEach(item => scanConflicts(item));
+                } else if (typeof obj === 'object' && obj !== null) {
+                    for (const key in obj) scanConflicts(obj[key]);
+                }
+            };
+            scanConflicts(jsonData);
+
+            if (conflicts.length > 0) {
+                // Return conflicts to UI instead of proceeding
+                return { success: false, status: 'conflict', conflicts: conflicts, jsonData: jsonData };
+            }
+
+
+            // 2. Remove [[...]] markers but KEEP content
+            const cleanGrammarMarkers = (obj) => {
+                if (typeof obj === 'string') {
+                    // Match [[#ID:Content]] -> Content
+                    return obj.replace(/\[\[#.*?:(.*?)\]\]/g, "$1");
+                    // Also match legacy [[Content]] -> Content (fallback)
+                    // return obj.replace(/\[\[(.*?)\]\]/g, "$1"); 
+                } else if (Array.isArray(obj)) {
+                    return obj.map(item => cleanGrammarMarkers(item));
+                } else if (typeof obj === 'object' && obj !== null) {
+                    for (const key in obj) {
+                        obj[key] = cleanGrammarMarkers(obj[key]);
+                    }
+                    return obj;
+                }
+                return obj;
+            };
+            cleanGrammarMarkers(jsonData);
+
+            // 3. Remove %%...%% completely (Legacy/Recall/Translation Original Terms)
             // Recursively remove %%Original%% markers from all string values in the object
             const cleanObjectStrings = (obj) => {
                 if (typeof obj === 'string') {
@@ -267,7 +404,7 @@ export async function processUpdate(doc, rawText) {
 
             if ((doc.documentName === "Actor" || doc.documentName === "Item") && jsonData.items && Array.isArray(jsonData.items)) {
                 jsonData.items = jsonData.items.map(newItem => {
-                    if (!newItem._id && doc.items) { console.warn(`AI Assistant | Safety: Item without ID skipped.`); return null; }
+                    if (!newItem._id && doc.items) { console.warn(`Phils Translator | Safety: Item without ID skipped.`); return null; }
                     if (doc.items) {
                         const original = doc.items.get(newItem._id);
                         if (original && (newItem.system?.description?.value === "" || newItem.system?.description?.value === null)) {
@@ -465,7 +602,7 @@ export async function addToGlossary(newItems) {
 
     // 1. Extract existing terms
     let allTerms = extractTermsFromHtml(content);
-    console.log(`AI Assistant | Found ${allTerms.length} existing terms.`);
+    console.log(`Phils Translator | Found ${allTerms.length} existing terms.`);
 
     // 2. Merge new terms (filtering duplicates)
     const existingOriginals = new Set(allTerms.map(t => t.original.toLowerCase().trim()));

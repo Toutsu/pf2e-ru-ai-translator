@@ -1,4 +1,4 @@
-import { loc, resolvePrompt, getCleanData, getContextDescription, getGlossaryContent, processUpdate, addToGlossary, MODULE_ID, injectOfficialTranslations } from './TranslationLogic.js';
+import { loc, resolvePrompt, getCleanData, getContextDescription, getGlossaryContent, processUpdate, addToGlossary, MODULE_ID, injectOfficialTranslations, injectGlossaryMarkers } from './TranslationLogic.js';
 
 const { FormApplication, Dialog, JournalEntry, JournalEntryPage } = /** @type {any} */ (globalThis);
 
@@ -37,11 +37,7 @@ export class TranslationAssistant extends FormApplication {
             <div id="drop-zone" style="border: 2px dashed #ccc; padding: 20px; text-align: center; margin-bottom: 10px;">
                 ${loc('DropZone') || "Drag Journal Here"}
             </div>
-            <div style="text-align: center;">
-                <button id="btn-select-journal" type="button">
-                    <i class="fas fa-list"></i> ${loc('SelectJournalBtn') || "Select Journal"}
-                </button>
-            </div>
+
         </div>`;
 
         new Dialog({
@@ -77,85 +73,7 @@ export class TranslationAssistant extends FormApplication {
                     }
                 });
 
-                html.find('#btn-select-journal').click(() => {
-                    const journals = globalThis.game.journal?.contents.filter(j => j.isOwner) || [];
-                    if (journals.length === 0) {
-                        ui.notifications.warn(loc('WarnNoJournalsOwned') || "No journals found that you own.");
-                        return;
-                    }
 
-                    // 1. Get Root Journals (no folder)
-                    const rootJournals = journals.filter(j => !j.folder).sort((a, b) => (a.sort || 0) - (b.sort || 0));
-
-                    // 2. Map Folders to Journals
-                    const folderMap = {};
-                    journals.filter(j => j.folder).forEach(j => {
-                        if (!folderMap[j.folder.id]) folderMap[j.folder.id] = [];
-                        folderMap[j.folder.id].push(j);
-                    });
-
-                    // 3. Sort journals within folders
-                    for (const folderId in folderMap) {
-                        folderMap[folderId].sort((a, b) => (a.sort || 0) - (b.sort || 0));
-                    }
-
-                    // 4. Get sorted list of folders (respecting sidebar sort)
-                    const sortedFolders = game.folders.filter(f => f.type === "JournalEntry").sort((a, b) => (a.sort || 0) - (b.sort || 0));
-
-                    let options = "";
-
-                    // 5. Build Options
-                    // Root Journals first
-                    if (rootJournals.length > 0) {
-                        const labelUnsorted = loc('LabelUnsorted');
-                        const finalLabel = (labelUnsorted === 'LabelUnsorted') ? 'Unsorted' : labelUnsorted;
-                        options += `<optgroup label="${finalLabel}">`;
-                        rootJournals.forEach(j => {
-                            options += `<option value="${j.id}">${j.name}</option>`;
-                        });
-                        options += `</optgroup>`;
-                    }
-
-                    // Folders
-                    sortedFolders.forEach(f => {
-                        if (folderMap[f.id]) {
-                            options += `<optgroup label="${f.name}">`;
-                            folderMap[f.id].forEach(j => {
-                                options += `<option value="${j.id}">${j.name}</option>`;
-                            });
-                            options += `</optgroup>`;
-                        }
-                    });
-
-                    const selectContent = `
-                    <div class="form-group">
-                        <label>${loc('LabelChooseJournal') || "Choose Journal:"}</label>
-                        <select id="journal-select" style="width: 100%; margin-bottom: 10px;">${options}</select>
-                    </div>`;
-
-                    new Dialog({
-                        title: loc('TitleSelectJournal') || "Select Journal",
-                        content: selectContent,
-                        buttons: {
-                            select: {
-                                label: loc('BtnSelect') || "Select",
-                                callback: (h) => {
-                                    const id = h.find('#journal-select').val();
-                                    const selectedDoc = game.journal.get(id);
-                                    if (selectedDoc) {
-                                        if (!selectedDoc.isOwner) {
-                                            ui.notifications.warn(loc('WarnNoPermission') || "You do not have permission to translate this Journal (Required: Owner).");
-                                            return;
-                                        }
-                                        html.closest('.app').find('.close').click(); // Close main picker
-                                        new TranslationDialog(selectedDoc).render(true);
-                                    }
-                                }
-                            }
-                        },
-                        default: "select"
-                    }).render(true);
-                });
             }
         }).render(true);
     }
@@ -241,7 +159,7 @@ export class TranslationDialog {
             buttons: {
                 go: {
                     label: loc('BtnCopy') || "Copy Prompt",
-                    icon: '<i class="fas fa-copy"></i>',
+                    icon: '<i class="fas fa-language"></i>',
                     callback: (html) => {
                         const prompt = html.find('[name="prompt"]').val();
                         const onlyNames = html.find('#only-names-check').is(':checked');
@@ -285,9 +203,25 @@ export class TranslationDialog {
                         if (onlyNames) prepareGlossaryGenPrompt(doc, finalUserPrompt, systemName, false, url, selectedPageIds);
                         else prepareTranslatePrompt(doc, finalUserPrompt, systemName, false, url, selectedPageIds);
                     }
+                },
+                check: {
+                    label: loc('BtnGrammarCheck') || "Grammar Check",
+                    icon: '<i class="fas fa-check-double"></i>',
+                    callback: (html) => {
+                        const prompt = html.find('[name="prompt"]').val();
+                        let selectedPageIds = [];
+                        html.find('.page-selector:checked').each((i, el) => selectedPageIds.push($(el).val()));
+
+                        // Check if Glossary exists (warn if not, but proceed)
+                        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+                        if (!glossaryExists) {
+                            ui.notifications.warn(loc('WarnNoGlossary') || "No 'AI Glossary' found. Grammar check might miss protected terms.");
+                        }
+
+                        prepareGrammarCheckPrompt(this.doc, prompt, systemName, false, url, selectedPageIds);
+                    }
                 }
             },
-            default: "go",
             render: (html) => {
                 html.closest('.window-content').css('overflow-y', 'hidden');
                 const batchSize = game.settings.get(MODULE_ID, 'batchSize') || 10;
@@ -345,20 +279,16 @@ export class TranslationDialog {
 
 async function prepareTranslatePrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null) {
     const cleanData = getCleanData(doc, sendFull, selectedPages);
-    const { docData: translatedData, replacedTerms } = await injectOfficialTranslations(cleanData);
+    const { docData: translatedData } = await injectOfficialTranslations(cleanData);
     const jsonString = JSON.stringify(translatedData, null, 2);
     // Glossary content is no longer needed in the prompt as we use inline replacements
-    const glossaryContent = "";
     let promptKey = "TranslateAndCreateGlossary";
     // Check if glossary exists to determine prompt key, but don't load content
     const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
     if (glossaryExists) promptKey = "TranslateWithGlossary";
 
-    // Replaced terms list is also no longer needed as separate list
-    let replacedTermsList = "";
-
     const defaultPrompt = loc('DefaultTranslate') || "Translate.";
-    // We pass empty strings for glossaryContent and replacedTermsList as they are now inline
+    // We pass empty strings for glossaryContent as they are now inline
     const finalPrompt = resolvePrompt(promptKey, { systemName, jsonString, userPrompt: userPrompt || defaultPrompt, glossaryContent: "", replacedTermsList: "" });
     const expectGlossaryCreation = (promptKey === "TranslateAndCreateGlossary");
     const expectGlossaryUpdate = (promptKey === "TranslateWithGlossary");
@@ -370,16 +300,30 @@ async function prepareGlossaryGenPrompt(doc, userPrompt, systemName, sendFull, t
 
     // Inject official translations so the AI sees the "German" version of known terms
     // and doesn't suggest them as new glossary items.
-    const { docData: translatedData, replacedTerms } = await injectOfficialTranslations(cleanData);
+    const { docData: translatedData } = await injectOfficialTranslations(cleanData);
 
     const textContent = getContextDescription(doc, translatedData);
-
-    // Replaced terms are inline, no list needed
-    let replacedTermsList = "";
 
     const defaultPrompt = loc('DefaultGlossary') || "Create a list of important terms.";
     const finalPrompt = resolvePrompt("GenerateGlossary", { systemName, docDesc: textContent, userPrompt: userPrompt || defaultPrompt, replacedTermsList: "" });
     copyAndOpen(finalPrompt, doc, true, targetUrl, false, false, true);
+}
+
+async function prepareGrammarCheckPrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null) {
+    // 1. Get clean data (this is presumably German text now)
+    const cleanData = getCleanData(doc, sendFull, selectedPages);
+
+    // 2. Mark German Terms with [[#ID:Term]]
+    // We assume input is already translated (German) or original (if used for that), but logic is to protect glossary terms.
+    const cleanWithMarkers = await injectGlossaryMarkers(cleanData);
+
+    const jsonString = JSON.stringify(cleanWithMarkers, null, 2);
+
+    const defaultPrompt = loc('DefaultGrammarCheck') || "Check grammar and logic.";
+    const finalPrompt = resolvePrompt("GrammarCheck", { systemName, jsonString, userPrompt: userPrompt || defaultPrompt });
+
+    // Usage: copyAndOpen(text, doc, isUpdateMode, targetUrl, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode)
+    copyAndOpen(finalPrompt, doc, true, targetUrl, false, false, false);
 }
 
 async function copyAndOpen(text, doc, isUpdateMode, targetUrl, expectGlossaryCreation = false, expectGlossaryUpdate = false, isGlossaryMode = false) {
@@ -447,6 +391,8 @@ export function showResultDialog(doc, initialContent = "", errorMsg = null, expe
 
                     if (typeof result === 'string') {
                         showResultDialog(doc, text, result, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode);
+                    } else if (result && result.status === 'conflict') {
+                        showConflictDialog(doc, text, result.conflicts);
                     } else if (result === true || result.success) {
                         // Success
 
@@ -493,7 +439,7 @@ function checkNextBatch(doc) {
         const freshDoc = game.journal.get(doc.id);
         if (freshDoc && freshDoc.documentName === "JournalEntry") {
             const hasMore = freshDoc.pages.some(p => !p.getFlag(MODULE_ID, 'aiProcessed'));
-            console.log(`AI Assistant | Check Next Batch: ${hasMore} (Pages: ${freshDoc.pages.size})`);
+            console.log(`Phils Translator | Check Next Batch: ${hasMore} (Pages: ${freshDoc.pages.size})`);
             if (hasMore) {
                 ui.notifications.info(loc('InfoNextBatch') || "Opening next batch...");
                 setTimeout(() => {
@@ -504,6 +450,97 @@ function checkNextBatch(doc) {
     }, 1000); // Wait 1s for updates to propagate
 }
 
+function showConflictDialog(doc, jsonText, conflicts) {
+    let itemsHtml = "<ul style='padding-left:0; list-style:none;'>";
+    conflicts.forEach(c => {
+        itemsHtml += `
+        <li style="margin-bottom:10px; padding:5px; background:#ddd; border-radius:3px;">
+            <div style="font-weight:bold; color:#d00;">${loc('LabelConflictChanged') || "Term Changed:"}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="text-decoration:line-through; color:#777;">${c.original}</div>
+                    <div style="color:#007700; font-weight:bold;">${c.current}</div>
+                </div>
+                <div style="text-align:right;">
+                     <label style="font-size:0.9em;">
+                        <input type="checkbox" class="conflict-choice" data-id="${c.id}" data-original="${c.original}" data-current="${c.current}">
+                        ${loc('LabelKeepNew') || "Keep New"}
+                     </label>
+                </div>
+            </div>
+        </li>`;
+    });
+    itemsHtml += "</ul>";
+
+    new Dialog({
+        title: loc('TitleConflict') || "Glossary Conflicts Detected",
+        content: `
+        <div class="ai-assistant-content">
+            <p>${loc('TextConflictExplanation') || "The AI changed some protected glossary terms. Please choose:"}</p>
+            <div style="max-height: 300px; overflow-y: auto; background: #eee; padding: 5px; color: #333;">
+                ${itemsHtml}
+            </div>
+            <p style="font-size:0.8em; color:#555;">${loc('HintCheckToKeep') || "Check 'Keep New' to accept the AI change."}</p>
+        </div>`,
+        buttons: {
+            apply: {
+                label: loc('BtnApplyResolution') || "Apply Resolution",
+                icon: '<i class="fas fa-check"></i>',
+                callback: async (html) => {
+                    let resolvedText = jsonText;
+
+                    // Iterate over all conflicts and resolve in text
+                    html.find('.conflict-choice').each((i, el) => {
+                        const id = $(el).data('id');
+                        const original = $(el).data('original');
+                        const current = $(el).data('current');
+                        const keepNew = $(el).is(':checked');
+
+                        // Regex to match this specific ID block: [[#ID:Current]]
+                        // We must escape ID because it has #
+                        // actually ID is just #1, #2...
+                        // RegExp need escaping for [ ]
+                        // The text contains [[#1:Brandkugel]]
+
+                        // We want to replace it globally if it appears multiple times? 
+                        // Actually injectGlossaryMarkers makes unique IDs for EVERY occurrence. #1, #2...
+                        // So each conflict is unique to one spot in the text.
+
+                        const searchPattern = `\\[\\[${id}:${current.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]\\]`;
+                        const regex = new RegExp(searchPattern, "g");
+
+                        if (keepNew) {
+                            // Keep New: Replace [[#1:Brandkugel]] with Brandkugel
+                            resolvedText = resolvedText.replace(regex, current);
+                        } else {
+                            // Restore Original: Replace [[#1:Brandkugel]] with Feuerball
+                            resolvedText = resolvedText.replace(regex, original);
+                        }
+                    });
+
+                    // Final cleanup of any remaining markers (just in case)
+                    // processed by processUpdate anyway but let's be clean
+                    // Actually, if we remove markers here, processUpdate receives clean text.
+                    // It won't find conflicts -> success.
+
+                    const result = await processUpdate(doc, resolvedText);
+
+                    // Handle result (same as in showResultDialog)
+                    if (typeof result === 'string') {
+                        showResultDialog(doc, resolvedText, result, false, false, false);
+                    } else if (result === true || result.success) {
+                        checkNextBatch(doc);
+                    }
+                }
+            },
+            cancel: {
+                label: loc('BtnCancel') || "Cancel",
+                icon: '<i class="fas fa-times"></i>'
+            }
+        },
+        default: "apply"
+    }).render(true);
+}
 function showGlossaryUpdateDialog(newItems, doc) {
     let itemsHtml = "<ul>";
     newItems.forEach(item => {

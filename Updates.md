@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.2.0 Update
+
+*   **NEU: Grammatik-Check Modus:**
+    *   Ein neuer Modus prüft bereits deutsche Texte auf Grammatik, Rechtschreibung und Ausdruck, ohne sie neu zu übersetzen. Ideal für selbstgeschriebene Abenteuer oder DeepL-Vorübersetzungen.
+*   **NEU: Indexed Glossary Protection:**
+    *   Sowohl im Grammatik-Check als auch in der Übersetzung werden Glossar-Begriffe nun "hart" geschützt (`[[#ID:Begriff]]`).
+    *   Offizielle Begriffe aus dem `lang-de-pf2e` Modul werden automatisch erkannt und geschützt, selbst wenn kein eigenes AI Glossar existiert.
+*   **NEU: Konflikt-Management Dialog:**
+    *   Sollte die KI (trotz Verbot) versuchen, einen geschützten Begriff zu ändern, fängt das Modul dies ab und zeigt einen Konflikt-Dialog.
+    *   Du kannst für jeden Begriff entscheiden: "Original behalten" (Standard / Sicher) oder "KI-Änderung akzeptieren".
+*   **Verbessert: Prompt-Sicherheit:**
+    *   Prompts wurden weiter gehärtet, um Halluzinationen bei JSON-Strukturen zu minimieren.
+*   **Code Cleanup:**
+    *   Der Code wurde entrümpelt und optimiert. Keine "KI-Überreste" mehr in den Logs.
+
 ## v1.1.5 Update
 
 *   **BUGFIX: Dialog-Reihenfolge:**

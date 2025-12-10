@@ -1,7 +1,7 @@
 {
     "id": "phils-pf2e-ai-translator",
     "title": "Phils Pf2e Ai Translator",
-    "version": "1.1.5",
+    "version": "1.2.0",
     "description": "AI Translation Assistant for Foundry VTT. Supports Gemini, ChatGPT, Claude, Copilot, and Perplexity.",
     "authors": [
         {
@@ -18,8 +18,18 @@
         "verified": "13"
     },
     "relationships": {
-        "systems": [],
-        "requires": []
+        "systems": [
+            {
+                "id": "pf2e",
+                "type": "system"
+            }
+        ],
+        "requires": [
+            {
+                "id": "lang-de-pf2e",
+                "type": "module"
+            }
+        ]
     },
     "esmodules": [
         "scripts/main.js",
@@ -40,5 +50,4 @@
     ],
     "license": "",
     "readme": ""
-
 }
