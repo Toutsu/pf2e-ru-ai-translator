@@ -1,5 +1,5 @@
 ## v1.2.8 - Save-Logic & Conflict Fixes
-*   **Fix: Konflikt-Dialog Async Saving:** Der "Konflikt-Dialog" wartet nun korrekt auf deine Entscheidung, bevor er weitermacht. Zuvor wurde die Eingabe ("Original wiederherstellen" vs. "Neu behalten") unter bestimmten Umständen ignoriert und der Text ungeprüft gespeichert.
+*   **Fix: Konflikt-Dialog Async Saving:** Der "Konflikt-Dialog" wartet nun korrekt auf deine Entscheidung, bevor er weitermacht. Zuvor wurde die Eingabe ("Original wiederherstellen" vs. "Neu behalten") unter bestimmten Umständen ignoriert und der original Text ungeprüft gespeichert.
 *   **Verbesserung: Konflikt-Modus:** Die strikte Konflikt-Erkennung (die nach veränderten/fehlenden `[[#ID...]]` Markern sucht) ist nun **nur noch im Grammatik-Modus** aktiv. Bei normalen Übersetzungen, wo sich Text und Satzbau natürlich ändern, führte dies zu unnötigen Fehlalarmen.
 
 ## v1.2.7 - Grammatik-Scope Logik Fix
@@ -95,3 +95,4 @@
     *   Wählt automatisch immer 10 Seiten auf einmal aus, um Context-Limits der KI nicht zu sprengen.
 *   **Multi-Provider Support:**
     *   Bereitet Prompts vor für: **ChatGPT, Claude, Gemini, Copilot, Perplexity**.
+
