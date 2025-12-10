@@ -28,9 +28,11 @@
 
 > [!TIP]
 > ### ✅ Official Approval / Offizielle Freigabe
-> The concept and workflow of this module have been **vetted and approved by Jan Wagner (Primetide), Head of Digital at Ulisses Spiele**.
->
+> **English:** The concept and workflow of this module have been **vetted and approved by Jan Wagner (Primetide), Head of Digital at Ulisses Spiele**.
 > It has been confirmed that this technical approach (mapping existing glossary terms for private use) complies with community guidelines and respects the intellectual property of **Ulisses Spiele** and **Paizo**.
+>
+> **Deutsch:** Das Konzept und der Workflow dieses Moduls wurden von **Jan Wagner (Primetide), Head of Digital bei Ulisses Spiele**, geprüft und freigegeben.
+> Es wurde bestätigt, dass dieser technische Ansatz (Mapping bestehender Glossar-Begriffe für den privaten Gebrauch) den Community-Richtlinien entspricht und das geistige Eigentum von **Ulisses Spiele** und **Paizo** respektiert.
 
 ---
 
