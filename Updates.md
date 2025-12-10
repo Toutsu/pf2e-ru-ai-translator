@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.2 (December 10, 2025)
+*   **Smart Auto-Next-Batch**: The module now remembers if you are in "Translation Mode" or "Grammar Check Mode".
+*   **Workflow Optimization**: After finishing a batch, it automatically opens the next *relevant* batch (e.g., if you are grammar checking, it finds the next page that hasn't been checked yet).
+*   **Status Tracking**: Improved internal tracking for `aiGrammarChecked` vs `aiProcessed`.
+*   **Localization**: Added messages for the specific new auto-next behavior.
+
 ## v1.2.1 (December 10, 2025)
 *   **Visual Tracking for Grammar Checks**: Added a new icon (`fa-spell-check`) to the page list. Now you can distinguish between pages that are just "Translated" (Green Check) and pages that have been "Grammar Checked" (Blue Spell Check).
 *   **Status Tracking**: The module now distinctively tracks `aiProcessed` (Translation) and `aiGrammarChecked` (Grammar Check) states.

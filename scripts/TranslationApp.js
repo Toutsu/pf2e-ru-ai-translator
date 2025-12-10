@@ -80,8 +80,9 @@ export class TranslationAssistant extends FormApplication {
 }
 
 export class TranslationDialog {
-    constructor(doc) {
+    constructor(doc, mode = 'translate') {
         this.doc = doc;
+        this.mode = mode; // 'translate' or 'grammar'
     }
 
     render(force) {
@@ -100,12 +101,19 @@ export class TranslationDialog {
             const pageList = Array.from(doc.pages);
             let selectedCount = 0;
 
+            const targetFlag = (this.mode === 'grammar') ? 'aiGrammarChecked' : 'aiProcessed';
+
             pageList.forEach(p => {
                 const isProcessed = p.getFlag(MODULE_ID, 'aiProcessed');
+                const isGrammarChecked = p.getFlag(MODULE_ID, 'aiGrammarChecked');
+
+                // Logic based on current mode
+                const isCompletedForMode = (this.mode === 'grammar') ? isGrammarChecked : isProcessed;
+
                 let isChecked = false;
 
-                // Auto-select logic: Select first 'batchSize' unprocessed pages
-                if (!isProcessed && selectedCount < batchSize) {
+                // Auto-select logic: Select first 'batchSize' unprocessed pages for CURRENT MODE
+                if (!isCompletedForMode && selectedCount < batchSize) {
                     isChecked = true;
                     selectedCount++;
                 }
@@ -403,14 +411,14 @@ export function showResultDialog(doc, initialContent = "", errorMsg = null, expe
                         const willOpenGlossaryDialog = (expectGlossaryCreation || expectGlossaryUpdate) && !isGlossaryMode && !glossaryHandled;
 
                         if (glossaryHandled) {
-                            showGlossaryUpdateDialog(result.newGlossaryItems, doc);
+                            showGlossaryUpdateDialog(result.newGlossaryItems, doc, processingMode);
                         } else if (willOpenGlossaryDialog) {
                             setTimeout(() => {
                                 showResultDialog(doc, "", null, false, false, true);
                             }, 500);
                         } else {
                             // AUTO-NEXT-BATCH (Only if no glossary dialog is shown)
-                            checkNextBatch(doc);
+                            checkNextBatch(doc, processingMode);
                         }
                     }
                 }
@@ -423,7 +431,7 @@ export function showResultDialog(doc, initialContent = "", errorMsg = null, expe
             label: loc('BtnSkip') || "Skip / Next",
             icon: '<i class="fas fa-forward"></i>',
             callback: () => {
-                checkNextBatch(doc);
+                checkNextBatch(doc, processingMode);
             }
         };
     }
@@ -435,16 +443,19 @@ export function showResultDialog(doc, initialContent = "", errorMsg = null, expe
     }).render(true);
 }
 
-function checkNextBatch(doc) {
+function checkNextBatch(doc, processingMode = 'translate') {
     setTimeout(() => {
         const freshDoc = game.journal.get(doc.id);
         if (freshDoc && freshDoc.documentName === "JournalEntry") {
-            const hasMore = freshDoc.pages.some(p => !p.getFlag(MODULE_ID, 'aiProcessed'));
-            console.log(`Phils Translator | Check Next Batch: ${hasMore} (Pages: ${freshDoc.pages.size})`);
+            const targetFlag = (processingMode === 'grammar') ? 'aiGrammarChecked' : 'aiProcessed';
+            const hasMore = freshDoc.pages.some(p => !p.getFlag(MODULE_ID, targetFlag));
+
+            console.log(`Phils Translator | Check Next Batch (${processingMode}): ${hasMore} (Pages: ${freshDoc.pages.size})`);
             if (hasMore) {
-                ui.notifications.info(loc('InfoNextBatch') || "Opening next batch...");
+                const msg = (processingMode === 'grammar') ? (loc('InfoNextBatchGrammar') || "Opening next Grammar Check batch...") : (loc('InfoNextBatch') || "Opening next Translation batch...");
+                ui.notifications.info(msg);
                 setTimeout(() => {
-                    new TranslationDialog(freshDoc).render(true);
+                    new TranslationDialog(freshDoc, processingMode).render(true);
                 }, 500);
             }
         }
@@ -530,7 +541,7 @@ function showConflictDialog(doc, jsonText, conflicts, processingMode = 'translat
                     if (typeof result === 'string') {
                         showResultDialog(doc, resolvedText, result, false, false, false, processingMode);
                     } else if (result === true || result.success) {
-                        checkNextBatch(doc);
+                        checkNextBatch(doc, processingMode);
                     }
                 }
             },
@@ -542,7 +553,7 @@ function showConflictDialog(doc, jsonText, conflicts, processingMode = 'translat
         default: "apply"
     }).render(true);
 }
-function showGlossaryUpdateDialog(newItems, doc) {
+function showGlossaryUpdateDialog(newItems, doc, processingMode = 'translate') {
     let itemsHtml = "<ul>";
     newItems.forEach(item => {
         itemsHtml += `<li><b>${item.original}</b> = ${item.translation}</li>`;
@@ -564,14 +575,14 @@ function showGlossaryUpdateDialog(newItems, doc) {
                 icon: '<i class="fas fa-plus"></i>',
                 callback: async () => {
                     await addToGlossary(newItems);
-                    checkNextBatch(doc);
+                    checkNextBatch(doc, processingMode);
                 }
             },
             cancel: {
                 label: loc('BtnCancel') || "Cancel",
                 icon: '<i class="fas fa-times"></i>',
                 callback: () => {
-                    checkNextBatch(doc);
+                    checkNextBatch(doc, processingMode);
                 }
             }
         },
