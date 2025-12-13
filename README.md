@@ -15,6 +15,7 @@
 <br>
 *The smart translation helper for Foundry VTT – no API costs, full control.*
 
+📖 **[Hier geht es zur ausführlichen Anleitung](anleitung.md)**.
 <br>
 
 <a href="#-deutsche-anleitung"><img src="https://img.shields.io/badge/%20-Deutsche_Anleitung-black?style=for-the-badge&logo=germany&logoColor=red" alt="Deutsche Anleitung"></a> <a href="#-english-instructions"><img src="https://img.shields.io/badge/%20-English_Instructions-black?style=for-the-badge&logo=united-kingdom&logoColor=white" alt="English Instructions"></a>
@@ -51,7 +52,7 @@ Phil's Pf2e Ai Translator verbindet deine Foundry VTT Welt mit der Power moderne
 >
 > 🧐 **Für das gehobene Auditorium:** Bevorzugst du eine eloquente Ausdrucksweise? [Exegese der Systemarchitektur](funktionen.md).
 >
-> 📖 **Hier geht es zur** [ausführlichen Anleitung](anleitung.md).
+
 
 ## 🚀 Funktionen
 
@@ -155,6 +156,7 @@ Portions of this module utilize data from the [Pathfinder German Translation mod
     <br><br>
     <p><i>Made with ❤️ for the Foundry VTT Community</i></p>
 </div>
+
 
 
 
