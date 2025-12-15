@@ -91,6 +91,23 @@ Phil's Pf2e Ai Translator verbindet deine Foundry VTT Welt mit der Power moderne
 4.  **Update**: In Foundry einfügen -> **"Journal aktualisieren"**.
 5.  **Konfliktlösung**: Wenn die KI geschützte Begriffe ändern will (z.B. "Feuerball" -> "Flammenkugel"), erscheint ein Warndialog. Du entscheidest: Original behalten oder Änderung akzeptieren?
 
+Antwort verarbeiten (Wichtig!)
+Die KI wird mit **zwei separaten JSON-Code-Blöcken** antworten. Gehe exakt so vor:
+
+#### 🅰️ Phase 1: Die Übersetzung
+1.  Kopiere aus der KI-Antwort nur den **ersten Code-Block** (unter der Überschrift "BLOCK 1").
+2.  Gehe zurück zu Foundry in das Fenster **"Result"**.
+3.  Füge den Code in das Textfeld ein.
+4.  Klicke auf **"Aktualisieren"**.
+    * *Das Journal wird nun im Hintergrund aktualisiert.*
+
+#### 🅱️ Phase 2: Das Glossar (Optional)
+*Falls die KI neue Begriffe gelernt hat (also eigentlich immer), öffnet sich jetzt automatisch ein zweites Fenster ("Glossar aktualisieren").*
+1.  Kopiere aus der KI-Antwort den **zweiten Code-Block** (unter der Überschrift "BLOCK 2").
+2.  Füge ihn in dieses neue Fenster ein.
+3.  Bestätige mit **"Hinzufügen"**.
+    * *Dein 'AI Glossary' ist nun schlauer für die nächste Runde!*
+
 
 # <img src="https://flagcdn.com/48x36/gb.png" width="28" height="21" alt="EN"> English Instructions
 
@@ -156,6 +173,7 @@ Portions of this module utilize data from the [Pathfinder German Translation mod
     <br><br>
     <p><i>Made with ❤️ for the Foundry VTT Community</i></p>
 </div>
+
 
 
 
