@@ -129,8 +129,7 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
             closeOnSubmit: false
         },
         actions: {
-            selectAll: TranslationConfigApp.onSelectAll,
-            selectNone: TranslationConfigApp.onSelectNone,
+            toggleSelect: TranslationConfigApp.onToggleSelect,
             selectNext: TranslationConfigApp.onSelectNext,
             copyPrompt: TranslationConfigApp.onCopyPrompt,
             grammarCheck: TranslationConfigApp.onGrammarCheck
@@ -150,8 +149,7 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
             title: loc('TitleTranslating', { name: doc.name }) || `Translating: ${doc.name}`,
             labels: {
                 labelPagesToTranslate: loc('LabelPagesToTranslate') || "Pages to Translate:",
-                btnSelectAll: loc('BtnSelectAll') || "All",
-                btnSelectNone: loc('BtnSelectNone') || "None",
+                btnToggleSelect: (loc('BtnSelectAll') || "All") + " / " + (loc('BtnSelectNone') || "None"),
                 btnNextBatch: loc('BtnNextBatch') || "Next Batch",
                 warnPageLimit: loc('WarnPageLimit') || "Warning: >10 pages selected.",
                 labelOnlyNames: loc('LabelOnlyNames') || "Only Generate Glossary (Names)",
@@ -218,17 +216,18 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
 
     // --- Actions ---
 
-    static onSelectAll(event, target) {
-        this.element.querySelectorAll('.page-selector').forEach(c => c.checked = true);
-        this.render(); // Re-render to update state/warning? Or direct DOM manipulation is fine. 
-        // V2 re-render might reset state if not persisted, but checkboxes are inputs.
-        // Direct DOM manipulation is safer for simple checkbox toggles without full re-render.
-        this.element.querySelector('#page-limit-warning').style.display = 'block'; // assume > 10 if all
-    }
+    static onToggleSelect(event, target) {
+        const checkboxes = Array.from(this.element.querySelectorAll('.page-selector'));
+        const allChecked = checkboxes.every(c => c.checked);
 
-    static onSelectNone(event, target) {
-        this.element.querySelectorAll('.page-selector').forEach(c => c.checked = false);
-        this.element.querySelector('#page-limit-warning').style.display = 'none';
+        // If all are checked, uncheck all. Otherwise, check all.
+        checkboxes.forEach(c => c.checked = !allChecked);
+
+        const warningDiv = this.element.querySelector('#page-limit-warning');
+        if (warningDiv) {
+            const count = checkboxes.filter(c => c.checked).length;
+            warningDiv.style.display = (count > 10) ? 'block' : 'none';
+        }
     }
 
     static onSelectNext(event, target) {
@@ -279,13 +278,13 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
         if (onlyNames) finalUserPrompt += " [IMPORTANT: Analyze/Translate ONLY proper names, places. Ignore body text.]";
 
         const proceedTranslate = async () => {
-            await prepareTranslatePrompt(this.document, finalUserPrompt, systemName, false, url, selectedPageIds);
+            await prepareTranslatePrompt(this.document, finalUserPrompt, systemName, false, url, selectedPageIds, this);
         };
 
         const proceedGlossary = async () => {
             // Create glossary mode logic
             let glossaryUserPrompt = prompt + " [IMPORTANT: Analyze/Translate ONLY proper names, places. Ignore body text.]";
-            await prepareGlossaryGenPrompt(this.document, glossaryUserPrompt, systemName, false, url, selectedPageIds);
+            await prepareGlossaryGenPrompt(this.document, glossaryUserPrompt, systemName, false, url, selectedPageIds, this);
         };
 
         if (!glossaryExists && !onlyNames) {
@@ -323,7 +322,7 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
             ui.notifications.warn(loc('WarnNoGlossary') || "No 'AI Glossary' found. Grammar check might miss protected terms.");
         }
 
-        await prepareGrammarCheckPrompt(this.document, prompt, systemName, false, url, selectedPageIds);
+        await prepareGrammarCheckPrompt(this.document, prompt, systemName, false, url, selectedPageIds, this);
     }
 
     static async myFormHandler(event, form, formData) { }
@@ -400,8 +399,19 @@ export class TranslationResultApp extends HandlebarsApplicationMixin(Application
         this.processingMode = options.processingMode || 'translate';
         this.selectedPages = options.selectedPages || null;
 
+        // Track if valid action was taken to decide if we should re-open config on close
+        this.actionTaken = false;
+
         let title = this.isGlossaryMode ? (loc('CreateGlossaryTitle') || "Create AI Glossary") : `Update: ${this.document.name}`;
         this.options.window.title = title;
+    }
+
+    async close(options = {}) {
+        await super.close(options);
+        // If closed without action (X button), re-open config to prevent getting lost
+        if (!this.actionTaken) {
+            checkNextBatch(this.document, this.processingMode);
+        }
     }
 
     static DEFAULT_OPTIONS = {
@@ -505,9 +515,11 @@ export class TranslationResultApp extends HandlebarsApplicationMixin(Application
                     selectedPages: this.selectedPages,
                     parentApp: this // to potentially return or close
                 }).render(true);
+                this.actionTaken = true; // Handled by ConflictApp
                 this.close();
             } else if (result === true || result.success) {
                 // Success
+                this.actionTaken = true;
                 const glossaryHandled = (result.newGlossaryItems && result.newGlossaryItems.length > 0);
                 const willOpenGlossaryDialog = (this.expectGlossaryCreation || this.expectGlossaryUpdate) && !this.isGlossaryMode && !glossaryHandled;
 
@@ -540,6 +552,7 @@ export class TranslationResultApp extends HandlebarsApplicationMixin(Application
     }
 
     static onSkip(event, target) {
+        this.actionTaken = true;
         checkNextBatch(this.document, this.processingMode);
         this.close();
     }
@@ -737,7 +750,7 @@ export class TranslationStatsApp extends HandlebarsApplicationMixin(ApplicationV
 
 // --- Logic Helpers Adaptations ---
 
-async function prepareTranslatePrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null) {
+async function prepareTranslatePrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null, callingApp = null) {
     const cleanData = getCleanData(doc, sendFull, selectedPages);
     const { docData: translatedData } = await injectOfficialTranslations(cleanData);
     const jsonString = JSON.stringify(translatedData, null, 2);
@@ -752,28 +765,28 @@ async function prepareTranslatePrompt(doc, userPrompt, systemName, sendFull, tar
     const expectGlossaryCreation = (promptKey === "TranslateAndCreateGlossary");
     const expectGlossaryUpdate = (promptKey === "TranslateWithGlossary");
 
-    copyAndOpen(finalPrompt, doc, true, targetUrl, expectGlossaryCreation, expectGlossaryUpdate, false, 'translate', selectedPages);
+    copyAndOpen(finalPrompt, doc, true, targetUrl, expectGlossaryCreation, expectGlossaryUpdate, false, 'translate', selectedPages, callingApp);
 }
 
-async function prepareGlossaryGenPrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null) {
+async function prepareGlossaryGenPrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null, callingApp = null) {
     const cleanData = getCleanData(doc, sendFull, selectedPages);
     const { docData: translatedData } = await injectOfficialTranslations(cleanData);
     const textContent = getContextDescription(doc, translatedData);
     const defaultPrompt = loc('DefaultGlossary') || "Create a list of important terms.";
     const finalPrompt = resolvePrompt("GenerateGlossary", { systemName, docDesc: textContent, userPrompt: userPrompt || defaultPrompt, replacedTermsList: "" });
-    copyAndOpen(finalPrompt, doc, true, targetUrl, false, false, true, 'translate', selectedPages);
+    copyAndOpen(finalPrompt, doc, true, targetUrl, false, false, true, 'translate', selectedPages, callingApp);
 }
 
-async function prepareGrammarCheckPrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null) {
+async function prepareGrammarCheckPrompt(doc, userPrompt, systemName, sendFull, targetUrl, selectedPages = null, callingApp = null) {
     const cleanData = getCleanData(doc, sendFull, selectedPages);
     const { processedData: cleanWithMarkers } = await injectGlossaryMarkers(cleanData);
     const jsonString = JSON.stringify(cleanWithMarkers, null, 2);
     const defaultPrompt = loc('DefaultGrammarCheck') || "Check grammar and logic.";
     const finalPrompt = resolvePrompt("GrammarCheck", { systemName, jsonString, userPrompt: userPrompt || defaultPrompt });
-    copyAndOpen(finalPrompt, doc, true, targetUrl, false, false, false, 'grammar', selectedPages);
+    copyAndOpen(finalPrompt, doc, true, targetUrl, false, false, false, 'grammar', selectedPages, callingApp);
 }
 
-async function copyAndOpen(text, doc, isUpdateMode, targetUrl, expectGlossaryCreation = false, expectGlossaryUpdate = false, isGlossaryMode = false, processingMode = 'translate', selectedPages = null) {
+async function copyAndOpen(text, doc, isUpdateMode, targetUrl, expectGlossaryCreation = false, expectGlossaryUpdate = false, isGlossaryMode = false, processingMode = 'translate', selectedPages = null, callingApp = null) {
     if (!text) { ui.notifications.error(loc('ErrorEmptyPrompt') || "Error: Empty Prompt"); return; }
 
     // Add Markers (Localized)
@@ -789,6 +802,10 @@ async function copyAndOpen(text, doc, isUpdateMode, targetUrl, expectGlossaryCre
             await navigator.clipboard.writeText(finalizedPrompt);
             ui.notifications.info(loc('PromptCopied') || "Prompt copied to clipboard!");
             window.open(targetUrl, "_blank");
+
+            // Close the calling configuration app if provided
+            if (callingApp) callingApp.close();
+
             if (isUpdateMode) {
                 new TranslationResultApp({
                     document: doc,
@@ -829,13 +846,16 @@ function checkNextBatch(doc, processingMode = 'translate') {
             const hasMore = freshDoc.pages.some(p => !p.getFlag(MODULE_ID, targetFlag));
 
             console.log(`Phils Translator | Check Next Batch (${processingMode}): ${hasMore} (Pages: ${freshDoc.pages.size})`);
+
+            // Always Re-Open Config, but show notification only if actual batching is likely needed
             if (hasMore) {
                 const msg = (processingMode === 'grammar') ? (loc('InfoNextBatchGrammar') || "Opening next Grammar Check batch...") : (loc('InfoNextBatch') || "Opening next Translation batch...");
                 ui.notifications.info(msg);
-                setTimeout(() => {
-                    new TranslationConfigApp({ document: freshDoc, mode: processingMode }).render(true);
-                }, 500);
             }
+
+            setTimeout(() => {
+                new TranslationConfigApp({ document: freshDoc, mode: processingMode }).render(true);
+            }, 150);
         }
-    }, 1000);
+    }, 200);
 }

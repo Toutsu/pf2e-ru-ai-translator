@@ -1,3 +1,9 @@
+## v1.4.1 - Non-Blocking Workflow & UI Polish
+*   **Workflow:** Der "Prompt kopieren" Prozess ist nun **non-blocking**. Das Konfigurations-Fenster schließt sich automatisch, damit du freie Sicht auf deinen Browser hast.
+*   **Workflow:** Das Konfigurations-Fenster öffnet sich nun **immer** automatisch wieder, nachdem du ein Update machst oder den Dialog abbrichst. Du verlierst so nie deinen Platz.
+*   **UI:** "Alle" und "Keine" Buttons wurden zu einem smarten **Toggle-Button** zusammengefasst.
+*   **Fix:** "Alles Auswählen" Logik repariert.
+
 ## v1.4.0 - Retroactive Statistics
 *   **NEU: Übersetzungs-Statistik:** Ein neues Statistik-Feature (erreichbar über den "Statistik"-Button im Hauptmenü) zeigt dir genau an, wie viel Arbeit dir das Modul bereits abgenommen hat.
     *   **Retroaktiv:** Zählt Wörter aller jemals mit dem Modul übersetzten Seiten.
