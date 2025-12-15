@@ -146,6 +146,49 @@ Portions of this module utilize data from the [Pathfinder German Translation mod
 **Phil's PF2e AI Translator** is licensed under the [GPL-3.0 License](LICENSE).
 
 
+## 🐛 Bekannte ~~Bugs~~ Features
+
+
+> ### 💾 Info: Da das Modul vor jeder Änderung ein Backup erstellt, kann es bei mehrstufigen Prozessen zu mehreren Backups kommen.
+> * **Beispiel:** Du übersetzt *"Chapter 1"*.
+>     1. Das Modul erstellt `Chapter 1 (Backup)`.
+>     2. Das Journal wird übersetzt und automatisch in `Kapitel 1` umbenannt.
+>     3. Wenn du nun weiter übersetzt oder den **Grammatik-Check** auf `Kapitel 1` ausführst, erstellt das Modul zur Sicherheit ein neues Backup: `Kapitel 1 (Backup)`.
+> * Du hast dann also den ursprünglichen englischen Stand UND den unkorrigierten deutschen Stand als Sicherung.
+
+Da dieses Modul als "Mittelsmann" zwischen Foundry und einer externen KI (wie ChatGPT oder Gemini) fungiert, liegen die meisten "Fehler" oft an der Laune der KI. Hier sind die Klassiker:
+
+* **Die gesprächige KI (Broken JSON):**
+    * *Das Problem:* Manchmal ignoriert die KI die Anweisung "nur JSON antworten" und schreibt davor: *"Hier ist deine Übersetzung..."* oder beendet den Code-Block nicht korrekt.
+    * *Der Fix:* Das Modul nutzt **Smart Paste**, um das zu filtern. Wenn es trotzdem rot aufleuchtet: Lösche den Einleitungssatz manuell aus dem Textfeld, bevor du auf "Aktualisieren" klickst.
+
+* **Das Token-Limit (Text bricht ab):**
+    * *Das Problem:* Wenn du versuchst, 50 Journal-Seiten auf einmal in die kostenlose Version von ChatGPT zu werfen, wird die Antwort mitten im Satz abbrechen.
+    * *Der Fix:* Nutze die Batch-Funktion klug. Übersetze große Abenteuer kapitelweise (z.B. 5-10 Seiten pro Rutsch).
+
+* **HTML-Salat:**
+    * *Das Problem:* Bei sehr komplex verschachtelten Tabellen vergisst die KI manchmal ein schließendes `</div>` oder `</td>`. Das kann das Layout in Foundry zerschießen.
+    * *Der Fix:* Wenn eine Seite komisch aussieht, öffne den HTML-Editor in Foundry und schau, ob am Ende ein Tag fehlt.
+
+---
+
+### 🇬🇧 Known Issues
+
+
+> ### 💾 Info: Since the module creates a backup before every operation, multi-step processes can result in multiple backups.
+> * **Example:** You translate *"Chapter 1"*.
+>     1. The module creates `Chapter 1 (Backup)`.
+>     2. The journal is translated and renamed to `Kapitel 1`.
+>     3. If you run the **Grammar Check** on `Kapitel 1`, the module creates a new safety backup: `Kapitel 1 (Backup)`.
+> * You will end up with both the original English state AND the raw German translation state as backups.
+
+Since this module acts as a "middleman" between Foundry and an external AI, most "bugs" are actually AI quirks.
+
+* **Chatty AI (Broken JSON):** Sometimes the AI ignores the "JSON only" rule and adds conversational filler. **Smart Paste** usually fixes this, but you might occasionally need to manually delete the "Here is your translation" text.
+* **Token Limits:** The free versions of ChatGPT/Claude have output limits. If you try to translate a massive journal at once, the text will cut off. **Solution:** Translate in smaller batches.
+* **HTML Errors:** Rarely, the AI might forget to close an HTML tag (like a `</div>`), causing visual glitches.
+
+
 <div align="center">
     <h2>❤️ Support the Development</h2>
     <p>If you enjoy this module and want to support open-source development for Foundry VTT, check out my Patreon!</p>
@@ -156,6 +199,7 @@ Portions of this module utilize data from the [Pathfinder German Translation mod
     <br><br>
     <p><i>Made with ❤️ for the Foundry VTT Community</i></p>
 </div>
+
 
 
 
