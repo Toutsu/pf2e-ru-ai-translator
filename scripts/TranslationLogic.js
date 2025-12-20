@@ -388,7 +388,9 @@ export async function processUpdate(doc, rawText, processingMode = 'translate', 
                                 // Grab a generous chunk
                                 const start = Math.max(0, index - 80);
                                 const end = Math.min(o.length, index + searchPattern.length + 80);
-                                let rawSnippet = "..." + o.substring(start, end).trim() + "...";
+                                // Strip HTML tags to prevent rendering errors in the UI
+                                let snippetVals = o.substring(start, end).replace(/<[^>]*>?/gm, " ");
+                                let rawSnippet = "..." + snippetVals.trim() + "...";
 
                                 // Extract Term from searchPattern: [[#ID:Term]]
                                 const termMatch = searchPattern.match(/\[\[#.*?:(.*?)\]\]/);
@@ -505,6 +507,9 @@ export async function processUpdate(doc, rawText, processingMode = 'translate', 
                             // Sanity check: Ensure it's not just "41" or "null"
                             if (cleanGap.match(/^(null|true|false|\d+)$/)) cleanGap = "";
                         }
+
+                        // Sanitize HTML from cleanGap to verify no stray tags break the UI
+                        cleanGap = cleanGap.replace(/<[^>]*>?/gm, " ");
 
                         // Final Cleanup of non-word edge chars
                         cleanGap = cleanGap.replace(/^[^\wäöüÄÖÜß("]+/, "")

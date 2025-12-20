@@ -1,3 +1,8 @@
+## v1.4.7 - Render Fix & UI Improvements
+*   **Critical Fix: Conflict Resolution Render Error:** Behoben eines Fehlers ("Template part 'form' must render a single HTML element"), der auftrat, wenn die KI HTML-Tags in der Kontext-Vorschau zurückgab (z.B. `</div>`). Die Kontext-Vorschau wird nun sicher bereinigt, bevor sie angezeigt wird.
+*   **UI Verbesserung: Resizable Window:** Das Fenster für die Seitenauswahl wächst nun dynamisch mit, wenn du das Konfigurations-Fenster größer ziehst.
+*   **UI Verbesserung:** Die initiale Höhe des Fensters wurde auf 600px begrenzt, um zu verhindern, dass es bei vielen Seiten im Vollbild-Modus öffnet.
+
 ## v1.4.6 - System Tag Protection & Critical Fix
 *   **Critical Fix: Pre-Translation Corruption:** Behoben eines kritischen Fehlers, bei dem System-Tags (`@Check`, `@UUID`) bereits *bevor* sie zur KI gesendet wurden fehlerhaft übersetzt wurden (z.B. durch interne Glossar-Injection). Das Modul ignoriert nun System-Tags und Inline-Rolls korrekt bei der Vorverarbeitung.
 *   **Fix: System Tags (`@Check`, `@UUID`):** Die KI-Prompts (DE/EN) wurden aktualisiert, um Pf2e-System-Tags strikt zu schützen. Die KI darf den Inhalt von `@Check[...]` und `@UUID[...]` Klammern nicht mehr übersetzen (kein "Wurf" oder "Gegenstand" mehr).

@@ -122,7 +122,7 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
         },
         position: {
             width: 500,
-            height: "auto"
+            height: 600
         },
         form: {
             handler: TranslationConfigApp.myFormHandler,
