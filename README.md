@@ -2,44 +2,118 @@
 
 # Phil's PF2e AI Translator
 
-![Foundry v12 Compatible](https://img.shields.io/badge/Foundry-v12-green)
-![Foundry v13 Compatible](https://img.shields.io/badge/Foundry-v13-brightgreen)
-![System](https://img.shields.io/badge/System-PF2e-blue)
-![License](https://img.shields.io/badge/License-GPLv3-blue)
-[![Version](https://img.shields.io/badge/version-v1.4.7-blue)](https://github.com/PhilsModules/phils-pf2e-ai-translator/releases)
-[![Patreon](https://img.shields.io/badge/SUPPORT-Patreon-ff424d?logo=patreon)](https://www.patreon.com/PhilsModules)
+![Foundry v13 Compatible](https://img.shields.io/badge/Foundry-v13-brightgreen?style=flat-square) ![Foundry v12 Compatible](https://img.shields.io/badge/Foundry-v12-green?style=flat-square) ![System](https://img.shields.io/badge/System-PF2e-blue?style=flat-square)
+![License](https://img.shields.io/badge/License-GPLv3-blue?style=flat-square) [![Version](https://img.shields.io/badge/Version-1.4.7-orange?style=flat-square)](https://github.com/PhilsModules/phils-pf2e-ai-translator/releases) [![Patreon](https://img.shields.io/badge/SUPPORT-Patreon-ff424d?style=flat-square&logo=patreon)](https://www.patreon.com/PhilsModules)
 
 <br>
 
-**Der smarte Übersetzungs-Helfer für Foundry VTT – keine API-Kosten, volle Kontrolle.**
+**The smart translation helper for Foundry VTT – no API costs, full control.**
 <br>
-*The smart translation helper for Foundry VTT – no API costs, full control.*
+_Der smarte Übersetzungs-Helfer für Foundry VTT – keine API-Kosten, volle Kontrolle._
 
-📖 **[Hier geht es zur ausführlichen Anleitung](anleitung.md)**.
 <br>
 
-<a href="#-deutsche-anleitung"><img src="https://img.shields.io/badge/%20-Deutsche_Anleitung-black?style=for-the-badge&logo=germany&logoColor=red" alt="Deutsche Anleitung"></a> <a href="#-english-instructions"><img src="https://img.shields.io/badge/%20-English_Instructions-black?style=for-the-badge&logo=united-kingdom&logoColor=white" alt="English Instructions"></a>
+<a href="#-english-instructions"><img src="https://img.shields.io/badge/%20-English_Instructions-black?style=for-the-badge&logo=united-kingdom&logoColor=white" alt="English Instructions"></a> <a href="#-deutsche-anleitung"><img src="https://img.shields.io/badge/%20-Deutsche_Anleitung-black?style=for-the-badge&logo=germany&logoColor=red" alt="Deutsche Anleitung"></a> <a href="Updates.md"><img src="https://img.shields.io/badge/%20-Update_Logs-black?style=for-the-badge&logo=clock&logoColor=white" alt="Updates"></a>
+
 </div>
 
+<br>
+
 > [!CAUTION]
+>
 > ### ⚖️ Private Use Only / Nur für den privaten Gebrauch
+>
 > **English:** Translations of copyrighted works (e.g. Pathfinder adventures) created with this module may **only be used for private purposes**. Publication, distribution, or commercial use (sale) is prohibited.
 >
 > **Deutsch:** Die mit diesem Modul erstellten Übersetzungen urheberrechtlich geschützter Werke dürfen **nur für den privaten Gebrauch** verwendet werden. Eine Veröffentlichung, Verbreitung oder kommerzielle Nutzung (Verkauf) ist nicht gestattet.
 
 > [!TIP]
+>
 > ### ✅ Official Approval / Offizielle Freigabe
+>
 > **English:** The concept and workflow of this module have been **vetted and approved by Jan Wagner (Primetide), Head of Digital at Ulisses Spiele**.
 > It has been confirmed that this technical approach (mapping existing glossary terms for private use) complies with community guidelines and respects the intellectual property of **Ulisses Spiele** and **Paizo**.
 >
 > **Deutsch:** Das Konzept und der Workflow dieses Moduls wurden von **Jan Wagner (Primetide), Head of Digital bei Ulisses Spiele**, geprüft und freigegeben.
 > Es wurde bestätigt, dass dieser technische Ansatz (Mapping bestehender Glossar-Begriffe für den privaten Gebrauch) den Community-Richtlinien entspricht und das geistige Eigentum von **Ulisses Spiele** und **Paizo** respektiert.
 
+<br>
+
 <div align="center">
 <br>
 <img src="https://github.com/PhilsModules/phils-pf2e-ai-translator/blob/main/cover.png" alt="Pf2e translator Preview" width="800">
-
 </div>
+
+<br>
+
+---
+
+<br>
+
+# <img src="https://flagcdn.com/48x36/gb.png" width="28" height="21" alt="EN"> English Instructions
+
+**Automated Translation of Foundry VTT Journals with AI**
+
+This module helps you to translate **large adventure modules** or long texts in Foundry VTT quickly and consistently. It is optimized for **PF2e** but works system-independently.
+
+## 🚀 Key Features
+
+- **No API Costs:** Works with the free web versions of Gemini, ChatGPT, & Co.
+- **Batch Translation:** Translate multiple pages at once.
+- **Glossary Support:** Automatically generates a glossary of names and terms to ensure consistent translation across pages.
+- **Smart Paste:** Automatically finds and extracts the JSON code block from the AI response.
+- **Official Translation Integration:** Checks the installed German Pathfinder 2e system module for existing translations to ensure consistency with official terms.
+- **Safety First:** Automatically creates a **Backup** (Copy) of your Journal before applying changes.
+
+## 📦 Installation
+
+1.  Open Foundry VTT.
+2.  Go to the **Add-on Modules** tab.
+3.  Click **Install Module**.
+4.  Paste the following **Manifest URL** into the field:
+    ```text
+    https://github.com/PhilsModules/phils-pf2e-ai-translator/releases/latest/download/module.json
+    ```
+5.  Click **Install**.
+
+## 📖 How to Use
+
+### Workflow A: Translation (Green Check ✅)
+
+1.  **Select Pages**: Choose the pages you want to translate.
+2.  **Generate Prompt**: Click **"Copy Prompt"**.
+3.  **AI Processing**: Paste into ChatGPT/Claude -> Copy Response (JSON).
+4.  **Update**: Paste into Foundry -> **"Update Journal"**.
+5.  **Loop**: The module automatically checks for remaining pages. If found, it opens the next window **pre-selected** for translation.
+
+### Workflow B: Grammar Check (Blue Spell Check 🧙‍♂️)
+
+1.  **Select Pages**: Choose pages (even if already translated) to check grammar.
+2.  **Generate Prompt**: Click **"Grammar Check"**.
+3.  **AI Processing**: Paste into ChatGPT/Claude -> Copy Response (JSON).
+4.  **Update**: Paste into Foundry -> **"Update Journal"**.
+5.  **Conflict Resolution**: If the AI tries to change protected terms, a warning dialog appears. You decide: Keep Original or Accept Change?
+
+### 🇬🇧 Known Issues
+
+> ### 💾 Info: Since the module creates a backup before every operation, multi-step processes can result in multiple backups.
+>
+> - **Example:** You translate _"Chapter 1"_.
+>   1. The module creates `Chapter 1 (Backup)`.
+>   2. The journal is translated and renamed to `Kapitel 1`.
+>   3. If you run the **Grammar Check** on `Kapitel 1`, the module creates a new safety backup: `Kapitel 1 (Backup)`.
+> - You will end up with both the original English state AND the raw German translation state as backups.
+
+Since this module acts as a "middleman" between Foundry and an external AI, most "bugs" are actually AI quirks.
+
+- **Chatty AI (Broken JSON):** Sometimes the AI ignores the "JSON only" rule and adds conversational filler. **Smart Paste** usually fixes this, but you might occasionally need to manually delete the "Here is your translation" text.
+- **Token Limits:** The free versions of ChatGPT/Claude have output limits. If you try to translate a massive journal at once, the text will cut off. **Solution:** Translate in smaller batches.
+- **HTML Errors:** Rarely, the AI might forget to close an HTML tag (like a `</div>`), causing visual glitches.
+
+<br>
+
+---
+
 <br>
 
 # <img src="https://flagcdn.com/48x36/de.png" width="28" height="21" alt="DE"> Deutsche Anleitung
@@ -48,21 +122,21 @@
 
 Phil's Pf2e Ai Translator verbindet deine Foundry VTT Welt mit der Power moderner KI. Das Besondere: **Du brauchst keine teuren API-Keys!** Das Modul arbeitet als intelligenter "Prompt-Engineer" für die kostenlosen Web-Versionen von Gemini, ChatGPT & Co.
 
+📖 **[Hier geht es zur ausführlichen Anleitung](anleitung.md)**.
+
 > 🧙‍♂️ **Deep Dive:** Willst du wissen, wie der "Grammatik-Schutzschild" und die "KI-Geiselnahme" genau funktionieren? Lies das [Grimoire der Faulheit (funktion.md)](funktion.md).
 >
 > 🧐 **Für das gehobene Auditorium:** Bevorzugst du eine eloquente Ausdrucksweise? [Exegese der Systemarchitektur](funktionen.md).
->
-
 
 ## 🚀 Funktionen
 
-* 💸 **Kostenlos:** Nutze die Web-Interfaces der KI-Anbieter (keine API-Kosten).
-* 📚 **Batch-Übersetzung:** Übersetze mehrere Seiten oder ganze Journale auf einmal.
-* 🧠 **Glossar-Support:** Erstellt automatisch ein Glossar für Namen und Begriffe, damit die Übersetzung über alle Seiten hinweg konsistent bleibt.
-* 🧹 **Smart Paste:** Du kannst die gesamte Antwort der KI kopieren. Das Modul filtert automatisch den JSON-Code heraus.
-* 🛡️ **Offizielle Begriffe:** Prüft das installierte deutsche Pathfinder 2e System-Modul auf existierende Übersetzungen, um Konsistenz mit offiziellen Begriffen zu garantieren (z.B. *Fortitude* -> *Zähigkeit*).
-* 🎨 **Kontext-Sicher:** HTML-Formatierungen und Links bleiben erhalten.
-* 💾 **Safety First:** Erstellt automatisch ein **Backup** (Kopie) deines Journals, bevor Änderungen angewendet werden.
+- 💸 **Kostenlos:** Nutze die Web-Interfaces der KI-Anbieter (keine API-Kosten).
+- 📚 **Batch-Übersetzung:** Übersetze mehrere Seiten oder ganze Journale auf einmal.
+- 🧠 **Glossar-Support:** Erstellt automatisch ein Glossar für Namen und Begriffe, damit die Übersetzung über alle Seiten hinweg konsistent bleibt.
+- 🧹 **Smart Paste:** Du kannst die gesamte Antwort der KI kopieren. Das Modul filtert automatisch den JSON-Code heraus.
+- 🛡️ **Offizielle Begriffe:** Prüft das installierte deutsche Pathfinder 2e System-Modul auf existierende Übersetzungen, um Konsistenz mit offiziellen Begriffen zu garantieren (z.B. _Fortitude_ -> _Zähigkeit_).
+- 🎨 **Kontext-Sicher:** HTML-Formatierungen und Links bleiben erhalten.
+- 💾 **Safety First:** Erstellt automatisch ein **Backup** (Kopie) deines Journals, bevor Änderungen angewendet werden.
 
 ## 📦 Installation
 
@@ -78,6 +152,7 @@ Phil's Pf2e Ai Translator verbindet deine Foundry VTT Welt mit der Power moderne
 ## 📖 Bedienung
 
 ### Workflow A: Übersetzung (Grüner Haken ✅)
+
 1.  **Seiten wählen**: Wähle die Seiten, die du übersetzen möchtest.
 2.  **Prompt generieren**: Klicke auf **"Übersetzung starten"**.
 3.  **KI-Verarbeitung**: Prompt bei ChatGPT/Claude einfügen -> Antwort kopieren (JSON).
@@ -85,111 +160,60 @@ Phil's Pf2e Ai Translator verbindet deine Foundry VTT Welt mit der Power moderne
 5.  **Loop**: Das Modul prüft automatisch auf verbleibende Seiten. Falls vorhanden, öffnet sich das nächste Fenster **automatisch vorausgewählt** für die Übersetzung.
 
 ### Workflow B: Grammatik-Check (Blauer Haken 🧙‍♂️)
+
 1.  **Seiten wählen**: Wähle Seiten (auch bereits übersetzte) für die Grammatikprüfung.
 2.  **Prompt generieren**: Klicke auf **"Grammatik Check"**.
 3.  **KI-Verarbeitung**: Prompt bei ChatGPT/Claude einfügen -> Antwort kopieren (JSON).
 4.  **Update**: In Foundry einfügen -> **"Journal aktualisieren"**.
 5.  **Konfliktlösung**: Wenn die KI geschützte Begriffe ändern will (z.B. "Feuerball" -> "Flammenkugel"), erscheint ein Warndialog. Du entscheidest: Original behalten oder Änderung akzeptieren?
 
+### 🐛 Bekannte ~~Bugs~~ Features
 
-# <img src="https://flagcdn.com/48x36/gb.png" width="28" height="21" alt="EN"> English Instructions
+> ### 💾 Info: Da das Modul vor jeder Änderung ein Backup erstellt, kann es bei mehrstufigen Prozessen zu mehreren Backups kommen.
+>
+> - **Beispiel:** Du übersetzt _"Chapter 1"_.
+>   1. Das Modul erstellt `Chapter 1 (Backup)`.
+>   2. Das Journal wird übersetzt und automatisch in `Kapitel 1` umbenannt.
+>   3. Wenn du nun weiter übersetzt oder den **Grammatik-Check** auf `Kapitel 1` ausführst, erstellt das Modul zur Sicherheit ein neues Backup: `Kapitel 1 (Backup)`.
+> - Du hast dann also den ursprünglichen englischen Stand UND den unkorrigierten deutschen Stand als Sicherung.
 
-**Automated Translation of Foundry VTT Journals with AI**
+Da dieses Modul als "Mittelsmann" zwischen Foundry und einer externen KI (wie ChatGPT oder Gemini) fungiert, liegen die meisten "Fehler" oft an der Laune der KI. Hier sind die Klassiker:
 
-This module helps you to translate **large adventure modules** or long texts in Foundry VTT quickly and consistently. It is optimized for **PF2e** but works system-independently.
+- **Die gesprächige KI (Broken JSON):**
+  - _Das Problem:_ Manchmal ignoriert die KI die Anweisung "nur JSON antworten" und schreibt davor: _"Hier ist deine Übersetzung..."_ oder beendet den Code-Block nicht korrekt.
+  - _Der Fix:_ Das Modul nutzt **Smart Paste**, um das zu filtern. Wenn es trotzdem rot aufleuchtet: Lösche den Einleitungssatz manuell aus dem Textfeld, bevor du auf "Aktualisieren" klickst.
+- **Das Token-Limit (Text bricht ab):**
+  - _Das Problem:_ Wenn du versuchst, 50 Journal-Seiten auf einmal in die kostenlose Version von ChatGPT zu werfen, wird die Antwort mitten im Satz abbrechen.
+  - _Der Fix:_ Nutze die Batch-Funktion klug. Übersetze große Abenteuer kapitelweise (z.B. 5-10 Seiten pro Rutsch).
+- **HTML-Salat:**
+  - _Das Problem:_ Bei sehr komplex verschachtelten Tabellen vergisst die KI manchmal ein schließendes `</div>` oder `</td>`. Das kann das Layout in Foundry zerschießen.
+  - _Der Fix:_ Wenn eine Seite komisch aussieht, öffne den HTML-Editor in Foundry und schau, ob am Ende ein Tag fehlt.
 
-## 🚀 Key Features
+<br>
 
-* **No API Costs:** Works with the free web versions of Gemini, ChatGPT, & Co.
-* **Batch Translation:** Translate multiple pages at once.
-* **Glossary Support:** Automatically generates a glossary of names and terms to ensure consistent translation across pages.
-* **Smart Paste:** Automatically finds and extracts the JSON code block from the AI response.
-* **Official Translation Integration:** Checks the installed German Pathfinder 2e system module for existing translations to ensure consistency with official terms.
-* **Safety First:** Automatically creates a **Backup** (Copy) of your Journal before applying changes.
-
-## 📖 How to Use
-
-### Workflow A: Translation (Green Check ✅)
-1.  **Select Pages**: Choose the pages you want to translate.
-2.  **Generate Prompt**: Click **"Copy Prompt"**.
-3.  **AI Processing**: Paste into ChatGPT/Claude -> Copy Response (JSON).
-4.  **Update**: Paste into Foundry -> **"Update Journal"**.
-5.  **Loop**: The module automatically checks for remaining pages. If found, it opens the next window **pre-selected** for translation.
-
-### Workflow B: Grammar Check (Blue Spell Check 🧙‍♂️)
-1.  **Select Pages**: Choose pages (even if already translated) to check grammar.
-2.  **Generate Prompt**: Click **"Grammar Check"**.
-3.  **AI Processing**: Paste into ChatGPT/Claude -> Copy Response (JSON).
-4.  **Update**: Paste into Foundry -> **"Update Journal"**.
-5.  **Conflict Resolution**: If the AI tries to change protected terms, a warning dialog appears. You decide: Keep Original or Accept Change?
-
+---
 
 # ⚖️ Credits & Licenses
 
 ## Special Thanks
+
 Ein riesiges Dankeschön und viele Grüße an **Primetide** und **Abaddon3851** für die Prüfung und Freigabe des Moduls!
 
 ## Pathfinder German Translation Data
+
 Portions of this module utilize data from the [Pathfinder German Translation module](https://github.com/Foundry-VTT-PF2-German/lang-de-pf2e) by Marco Seither. Licensed under the MIT License.
 
 > **MIT License**
 >
 > **Copyright (c) 2023 Marco Seither**
 >
-> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
->
-> The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
->
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+> Permission is hereby granted, free of charge, to any person obtaining a copy of this software...
 
 ## Module License
+
 **Phil's PF2e AI Translator** is licensed under the [GPL-3.0 License](LICENSE).
 
-
----
-
-## 🐛 Bekannte ~~Bugs~~ Features
-
-
-> ### 💾 Info: Da das Modul vor jeder Änderung ein Backup erstellt, kann es bei mehrstufigen Prozessen zu mehreren Backups kommen.
-> * **Beispiel:** Du übersetzt *"Chapter 1"*.
->     1. Das Modul erstellt `Chapter 1 (Backup)`.
->     2. Das Journal wird übersetzt und automatisch in `Kapitel 1` umbenannt.
->     3. Wenn du nun weiter übersetzt oder den **Grammatik-Check** auf `Kapitel 1` ausführst, erstellt das Modul zur Sicherheit ein neues Backup: `Kapitel 1 (Backup)`.
-> * Du hast dann also den ursprünglichen englischen Stand UND den unkorrigierten deutschen Stand als Sicherung.
-
-Da dieses Modul als "Mittelsmann" zwischen Foundry und einer externen KI (wie ChatGPT oder Gemini) fungiert, liegen die meisten "Fehler" oft an der Laune der KI. Hier sind die Klassiker:
-
-* **Die gesprächige KI (Broken JSON):**
-    * *Das Problem:* Manchmal ignoriert die KI die Anweisung "nur JSON antworten" und schreibt davor: *"Hier ist deine Übersetzung..."* oder beendet den Code-Block nicht korrekt.
-    * *Der Fix:* Das Modul nutzt **Smart Paste**, um das zu filtern. Wenn es trotzdem rot aufleuchtet: Lösche den Einleitungssatz manuell aus dem Textfeld, bevor du auf "Aktualisieren" klickst.
-
-* **Das Token-Limit (Text bricht ab):**
-    * *Das Problem:* Wenn du versuchst, 50 Journal-Seiten auf einmal in die kostenlose Version von ChatGPT zu werfen, wird die Antwort mitten im Satz abbrechen.
-    * *Der Fix:* Nutze die Batch-Funktion klug. Übersetze große Abenteuer kapitelweise (z.B. 5-10 Seiten pro Rutsch).
-
-* **HTML-Salat:**
-    * *Das Problem:* Bei sehr komplex verschachtelten Tabellen vergisst die KI manchmal ein schließendes `</div>` oder `</td>`. Das kann das Layout in Foundry zerschießen.
-    * *Der Fix:* Wenn eine Seite komisch aussieht, öffne den HTML-Editor in Foundry und schau, ob am Ende ein Tag fehlt.
-
----
-
-### 🇬🇧 Known Issues
-
-
-> ### 💾 Info: Since the module creates a backup before every operation, multi-step processes can result in multiple backups.
-> * **Example:** You translate *"Chapter 1"*.
->     1. The module creates `Chapter 1 (Backup)`.
->     2. The journal is translated and renamed to `Kapitel 1`.
->     3. If you run the **Grammar Check** on `Kapitel 1`, the module creates a new safety backup: `Kapitel 1 (Backup)`.
-> * You will end up with both the original English state AND the raw German translation state as backups.
-
-Since this module acts as a "middleman" between Foundry and an external AI, most "bugs" are actually AI quirks.
-
-* **Chatty AI (Broken JSON):** Sometimes the AI ignores the "JSON only" rule and adds conversational filler. **Smart Paste** usually fixes this, but you might occasionally need to manually delete the "Here is your translation" text.
-* **Token Limits:** The free versions of ChatGPT/Claude have output limits. If you try to translate a massive journal at once, the text will cut off. **Solution:** Translate in smaller batches.
-* **HTML Errors:** Rarely, the AI might forget to close an HTML tag (like a `</div>`), causing visual glitches.
-
+<br>
 
 <div align="center">
     <h2>❤️ Support the Development</h2>
@@ -201,12 +225,3 @@ Since this module acts as a "middleman" between Foundry and an external AI, most
     <br><br>
     <p><i>Made with ❤️ for the Foundry VTT Community</i></p>
 </div>
-
-
-
-
-
-
-
-
-
