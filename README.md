@@ -49,7 +49,7 @@
 ### Зависимости
 
 Для работы модуля **обязательно** требуется установленный модуль русского перевода PF2e:
-- **lang-ru-pf2e** — модуль русского перевода системы Pathfinder 2e
+- **pf2e-ru** — модуль русского перевода системы Pathfinder 2e ([GitLab](https://gitlab.com/gnuraco/pf2r))
 
 ### Установка модуля
 
@@ -58,7 +58,7 @@
 3. Нажмите **Install Module**.
 4. Вставьте **Manifest URL** в поле:
     ```text
-    https://github.com/your-repo/phils-pf2e-ai-translator-rus/releases/latest/download/module.json
+    https://github.com/Toutsu/pf2e-ru-ai-translator/releases/latest/download/module.json
     ```
 5. Нажмите **Install**.
 
@@ -123,7 +123,7 @@ This module helps you translate **large adventure modules** or long texts in Fou
 ### Dependencies
 
 This module **requires** the Russian PF2e translation module:
-- **lang-ru-pf2e** — Russian translation module for Pathfinder 2e system
+- **pf2e-ru** — Russian translation module for Pathfinder 2e system ([GitLab](https://gitlab.com/gnuraco/pf2r))
 
 ### Module Installation
 
@@ -132,7 +132,7 @@ This module **requires** the Russian PF2e translation module:
 3. Click **Install Module**.
 4. Paste the following **Manifest URL** into the field:
     ```text
-    https://github.com/your-repo/phils-pf2e-ai-translator-rus/releases/latest/download/module.json
+    https://github.com/Toutsu/pf2e-ru-ai-translator/releases/latest/download/module.json
     ```
 5. Click **Install**.
 
