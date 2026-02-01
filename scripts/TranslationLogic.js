@@ -90,7 +90,7 @@ async function loadDictionary() {
 
     // 2. Load User Glossary Terms
     let glossaryDictionary = {};
-    const glossaryJournal = game.journal.find(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+    const glossaryJournal = game.journal.find(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
     if (glossaryJournal) {
         const page = glossaryJournal.pages.find(p => p.type === "text");
         if (page && page.text?.content) {
@@ -250,7 +250,7 @@ export function getContextDescription(doc, rawData) {
     else if (rawData.system?.details?.publicNotes) desc = rawData.system.details.publicNotes;
     else if (doc.documentName === "JournalEntry" && rawData.pages) desc = rawData.pages.map(p => p.text?.content || "").join("\n\n");
     if (rawData.containedSpells && rawData.containedSpells.length > 0) {
-        desc += "\n\n--- ENTHALTENE ZAUBER (Liste) ---\n" + rawData.containedSpells.map(s => `- ${s.name} (Level ${s.level || 1})`).join("\n");
+        desc += "\n\n--- СОДЕРЖАЩИЕСЯ ЗАКЛИНАНИЯ (Список) ---\n" + rawData.containedSpells.map(s => `- ${s.name} (Уровень ${s.level || 1})`).join("\n");
     }
     let clean = desc.replace(/<[^>]*>?/gm, '').trim();
     return clean ? clean.substring(0, 8000) : "(No description found)";
@@ -258,7 +258,7 @@ export function getContextDescription(doc, rawData) {
 
 export function getGlossaryContent() {
     const glossaryJournal = game.journal.find(j =>
-        j.name === "AI Glossary" || j.name === "AI Glossar"
+        j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ"
     );
     if (!glossaryJournal) return null;
     let content = "";
@@ -287,7 +287,7 @@ export async function processUpdate(doc, rawText, processingMode = 'translate', 
                 } else if (json.name === "AI Glossary Update" && json.newTerms && Array.isArray(json.newTerms)) {
                     // New Standard: Named Object for Glossary Update
                     newGlossaryItems = json.newTerms;
-                } else if (json.name === "AI Glossary" || json.name === "AI Glossar") {
+                } else if (json.name === "AI Glossary" || json.name === "AI Glossar" || json.name === "Словарь ИИ") {
                     // New Glossary Journal Object
                     glossaryJournalJson = json;
                 } else if (json.pages || json.items || json.system || json.name) {
@@ -305,7 +305,7 @@ export async function processUpdate(doc, rawText, processingMode = 'translate', 
         if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
             try {
                 const json = JSON.parse(rawText.substring(firstBrace, lastBrace + 1));
-                if (json.name === "AI Glossary" || json.name === "AI Glossar") glossaryJournalJson = json;
+                if (json.name === "AI Glossary" || json.name === "AI Glossar" || json.name === "Словарь ИИ") glossaryJournalJson = json;
                 else translationJson = json;
             } catch (e) { }
         }
@@ -318,7 +318,7 @@ export async function processUpdate(doc, rawText, processingMode = 'translate', 
     try {
         // Handle New Glossary Creation OR Update
         if (glossaryJournalJson) {
-            const existing = game.journal.find(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+            const existing = game.journal.find(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
             if (existing) {
                 // Glossary exists: Extract terms from the returned JSON to update it
                 const page = glossaryJournalJson.pages?.find(p => p.type === "text");
@@ -345,7 +345,7 @@ export async function processUpdate(doc, rawText, processingMode = 'translate', 
                 }
             } else {
                 await JournalEntry.create(glossaryJournalJson);
-                ui.notifications.info(loc('InfoGlossaryCreated') || "Neues Journal 'AI Glossary' erfolgreich erstellt!");
+                ui.notifications.info(loc('InfoGlossaryCreated') || "Новый журнал 'AI Glossary' успешно создан!");
             }
 
             // If we ONLY got a glossary and handled it (either created or extracted terms), return success
@@ -516,7 +516,7 @@ export async function processUpdate(doc, rawText, processingMode = 'translate', 
                             .replace(/[^\wäöüÄÖÜß).!?"']+$/, "");
 
 
-                        if (cleanGap.length < 2) return "[GELÖSCHT]";
+                        if (cleanGap.length < 2) return "[УДАЛЕНО]";
 
                         if (cleanGap.length > 250) cleanGap = cleanGap.substring(0, 250) + "...";
 
@@ -616,7 +616,7 @@ export async function processUpdate(doc, rawText, processingMode = 'translate', 
                         conflicts.push({
                             id: id,
                             original: originalTerm,
-                            current: "[GELÖSCHT / FEHLT]",
+                            current: "[УДАЛЕНО / ОТСУТСТВУЕТ]",
                             originalContext: originalContext || "(Context not found)",
                             newContext: recoveredContext || "(Context lost - Term deleted)"
                         });
@@ -914,7 +914,7 @@ function validateDeepIds(json, validIds, errors = [], path = "") {
 }
 
 export async function addToGlossary(newItems) {
-    const glossaryJournal = game.journal.find(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+    const glossaryJournal = game.journal.find(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
     if (!glossaryJournal) {
         ui.notifications.warn(loc('WarnGlossaryNotFound') || "AI Glossary not found.");
         return;

@@ -176,7 +176,7 @@ export class TranslationDialog {
                         html.find('.page-selector:checked').each((i, el) => selectedPageIds.push($(el).val()));
 
                         // Check if Glossary exists
-                        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+                        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
 
                         if (!glossaryExists && !onlyNames) {
                             // Warn user and suggest creating glossary first
@@ -222,7 +222,7 @@ export class TranslationDialog {
                         html.find('.page-selector:checked').each((i, el) => selectedPageIds.push($(el).val()));
 
                         // Check if Glossary exists (warn if not, but proceed)
-                        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+                        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
                         if (!glossaryExists) {
                             ui.notifications.warn(loc('WarnNoGlossary') || "No 'AI Glossary' found. Grammar check might miss protected terms.");
                         }
@@ -293,7 +293,7 @@ async function prepareTranslatePrompt(doc, userPrompt, systemName, sendFull, tar
     // Glossary content is no longer needed in the prompt as we use inline replacements
     let promptKey = "TranslateAndCreateGlossary";
     // Check if glossary exists to determine prompt key, but don't load content
-    const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+    const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
     if (glossaryExists) promptKey = "TranslateWithGlossary";
 
     const defaultPrompt = loc('DefaultTranslate') || "Translate.";
@@ -381,7 +381,7 @@ export function showResultDialog(doc, initialContent = "", errorMsg = null, expe
                 if (text) {
                     // STRICT FAILSAFE:
                     // 1. Translation Mode: MUST NOT contain "name": "AI Glossary"
-                    if (!isGlossaryMode && (text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"'))) {
+                    if (!isGlossaryMode && (text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"') || text.includes('"name": "Словарь ИИ"'))) {
                         const errorText = loc('ErrorGlossaryInTranslation') || "Error: It looks like you pasted the Glossary JSON here. Please paste ONLY the Translation JSON.";
                         ui.notifications.error(errorText);
                         showResultDialog(doc, text, errorText, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode, processingMode, selectedPages);
@@ -389,7 +389,7 @@ export function showResultDialog(doc, initialContent = "", errorMsg = null, expe
                     }
 
                     // 2. Glossary Mode: MUST contain "name": "AI Glossary"
-                    if (isGlossaryMode && !(text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"'))) {
+                    if (isGlossaryMode && !(text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"') || text.includes('"name": "Словарь ИИ"'))) {
                         const errorText = loc('ErrorInvalidGlossaryJson') || "Error: This does not look like the Glossary JSON. Please paste the Glossary JSON block.";
                         ui.notifications.error(errorText);
                         showResultDialog(doc, text, errorText, expectGlossaryCreation, expectGlossaryUpdate, isGlossaryMode, processingMode, selectedPages);

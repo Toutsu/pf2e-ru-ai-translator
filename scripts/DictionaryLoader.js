@@ -2,15 +2,15 @@ export class DictionaryLoader {
     static _cache = null;
 
     /**
-     * Loads official translations from the lang-de-pf2e module.
-     * @returns {Promise<Object>} A map of English terms to German translations.
+     * Loads official translations from the pf2e-ru module.
+     * @returns {Promise<Object>} A map of English terms to Russian translations.
      */
     static async loadOfficialTranslations() {
         if (this._cache) return this._cache;
 
         const dictionary = {};
-        const packDir = "modules/lang-de-pf2e/translation/de/compendium";
-        const systemFile = "modules/lang-de-pf2e/translation/de/de.json";
+        const packDir = "modules/pf2e-ru/data/community/pf2e/packs";
+        const systemFile = "modules/pf2e-ru/data/community/pf2e/pf2e.json";
 
         try {
             console.log("Phil's Journal Translator | Loading official translations...");
@@ -56,7 +56,7 @@ export class DictionaryLoader {
                 }
 
                 // Explicitly add Perception if missed (it might be "Perception Check" in en.json vs "Wahrnehmung" in de.json)
-                if (!dictionary["Perception"]) dictionary["Perception"] = "Wahrnehmung";
+                if (!dictionary["Perception"]) dictionary["Perception"] = "Восприятие";
 
             } catch (err) {
                 console.warn("Phil's Journal Translator | Failed to load system translations (en.json/de.json comparison):", err);
@@ -72,7 +72,7 @@ export class DictionaryLoader {
                         if (pf2e.Skill) Object.entries(pf2e.Skill).forEach(([k, v]) => add(k, v));
                         const abilityMap = { "Strength": pf2e.AbilityStr, "Dexterity": pf2e.AbilityDex, "Constitution": pf2e.AbilityCon, "Intelligence": pf2e.AbilityInt, "Wisdom": pf2e.AbilityWis, "Charisma": pf2e.AbilityCha };
                         Object.entries(abilityMap).forEach(([k, v]) => add(k, v));
-                        add("Perception", "Wahrnehmung");
+                        add("Perception", "Восприятие");
                     }
                 } catch (e) { console.error("Fallback loading failed", e); }
             }

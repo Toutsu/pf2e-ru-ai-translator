@@ -272,7 +272,7 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
         const url = THEMES[providerKey]?.url || THEMES.gemini.url;
 
         // Check Glossary
-        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
 
         let finalUserPrompt = prompt;
         if (onlyNames) finalUserPrompt += " [IMPORTANT: Analyze/Translate ONLY proper names, places. Ignore body text.]";
@@ -317,7 +317,7 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
         const providerKey = game.settings.get(MODULE_ID, 'aiProvider') || 'gemini';
         const url = THEMES[providerKey]?.url || THEMES.gemini.url;
 
-        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+        const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
         if (!glossaryExists) {
             ui.notifications.warn(loc('WarnNoGlossary') || "No 'AI Glossary' found. Grammar check might miss protected terms.");
         }
@@ -484,14 +484,14 @@ export class TranslationResultApp extends HandlebarsApplicationMixin(Application
             }
 
             // Validate Glossary JSON confusion
-            if (!this.isGlossaryMode && (text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"'))) {
+            if (!this.isGlossaryMode && (text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"') || text.includes('"name": "Словарь ИИ"'))) {
                 const errorText = loc('ErrorGlossaryInTranslation') || "Error: It looks like you pasted the Glossary JSON here.";
                 this.errorMsg = errorText;
                 this.initialContent = text;
                 this.render();
                 return;
             }
-            if (this.isGlossaryMode && !(text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"'))) {
+            if (this.isGlossaryMode && !(text.includes('"name": "AI Glossary"') || text.includes('"name": "AI Glossar"') || text.includes('"name": "Словарь ИИ"'))) {
                 const errorText = loc('ErrorInvalidGlossaryJson') || "Error: This does not look like the Glossary JSON.";
                 this.errorMsg = errorText;
                 this.initialContent = text;
@@ -756,7 +756,7 @@ async function prepareTranslatePrompt(doc, userPrompt, systemName, sendFull, tar
     const jsonString = JSON.stringify(translatedData, null, 2);
 
     let promptKey = "TranslateAndCreateGlossary";
-    const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar");
+    const glossaryExists = game.journal.some(j => j.name === "AI Glossary" || j.name === "AI Glossar" || j.name === "Словарь ИИ");
     if (glossaryExists) promptKey = "TranslateWithGlossary";
 
     const defaultPrompt = loc('DefaultTranslate') || "Translate.";
