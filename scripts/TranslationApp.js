@@ -19,7 +19,7 @@ export class TranslationAssistant extends FormApplication {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: "translation-assistant",
             title: loc('Title') || "AI Translation Assistant",
-            template: "modules/phils-pf2e-ai-translator/templates/translation-assistant.html",
+            template: "modules/pf2e-ru-ai-translator/templates/translation-assistant.html",
             width: 500,
             height: "auto",
             classes: ["ai-assistant-window"]

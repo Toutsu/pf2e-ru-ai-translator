@@ -31,7 +31,7 @@ export class TranslationAssistantApp extends HandlebarsApplicationMixin(Applicat
 
     static PARTS = {
         form: {
-            template: "modules/phils-pf2e-ai-translator/templates/translation-dropzone.hbs"
+            template: "modules/pf2e-ru-ai-translator/templates/translation-dropzone.hbs"
         }
     };
 
@@ -138,7 +138,7 @@ export class TranslationConfigApp extends HandlebarsApplicationMixin(Application
 
     static PARTS = {
         form: {
-            template: "modules/phils-pf2e-ai-translator/templates/translation-config.hbs"
+            template: "modules/pf2e-ru-ai-translator/templates/translation-config.hbs"
         }
     };
 
@@ -371,7 +371,7 @@ export class ConfirmationApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static PARTS = {
         form: {
-            template: "modules/phils-pf2e-ai-translator/templates/confirmation.hbs"
+            template: "modules/pf2e-ru-ai-translator/templates/confirmation.hbs"
         }
     };
 
@@ -439,7 +439,7 @@ export class TranslationResultApp extends HandlebarsApplicationMixin(Application
 
     static PARTS = {
         form: {
-            template: "modules/phils-pf2e-ai-translator/templates/translation-result.hbs"
+            template: "modules/pf2e-ru-ai-translator/templates/translation-result.hbs"
         }
     };
 
@@ -598,7 +598,7 @@ export class ConflictResolutionApp extends HandlebarsApplicationMixin(Applicatio
 
     static PARTS = {
         form: {
-            template: "modules/phils-pf2e-ai-translator/templates/translation-conflict.hbs"
+            template: "modules/pf2e-ru-ai-translator/templates/translation-conflict.hbs"
         }
     };
 
@@ -683,7 +683,7 @@ export class GlossaryUpdateApp extends HandlebarsApplicationMixin(ApplicationV2)
 
     static PARTS = {
         form: {
-            template: "modules/phils-pf2e-ai-translator/templates/translation-glossary.hbs"
+            template: "modules/pf2e-ru-ai-translator/templates/translation-glossary.hbs"
         }
     };
 
@@ -736,7 +736,7 @@ export class TranslationStatsApp extends HandlebarsApplicationMixin(ApplicationV
 
     static PARTS = {
         content: {
-            template: "modules/phils-pf2e-ai-translator/templates/translation-stats.hbs"
+            template: "modules/pf2e-ru-ai-translator/templates/translation-stats.hbs"
         }
     };
 
