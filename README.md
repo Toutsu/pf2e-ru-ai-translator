@@ -1,8 +1,8 @@
 <div align="center">
 
-# Phil's PF2e AI Translator (Russian)
+# Daggerheart AI Translator (Russian)
 
-![Foundry v13 Compatible](https://img.shields.io/badge/Foundry-v13-brightgreen?style=flat-square) ![Foundry v12 Compatible](https://img.shields.io/badge/Foundry-v12-green?style=flat-square) ![System](https://img.shields.io/badge/System-PF2e-blue?style=flat-square)
+![Foundry v13 Compatible](https://img.shields.io/badge/Foundry-v13-brightgreen?style=flat-square) ![Foundry v12 Compatible](https://img.shields.io/badge/Foundry-v12-green?style=flat-square) ![System](https://img.shields.io/badge/System-Daggerheart-blue?style=flat-square)
 ![License](https://img.shields.io/badge/License-GPLv3_%2F_CC_BY--NC--ND-blue?style=flat-square)
 
 <br>
@@ -21,7 +21,7 @@
 >
 > ### ⚖️ Только для личного использования
 >
-> Переводы произведений, защищённых авторским правом (например, приключений Pathfinder), созданные с помощью этого модуля, могут использоваться **только в личных целях**. Публикация, распространение или коммерческое использование (продажа) запрещены.
+> Переводы произведённых материалов, защищённых авторским правом, созданные с помощью этого модуля, могут использоваться **только в личных целях**. Публикация, распространение или коммерческое использование (продажа) запрещены.
 
 <br>
 
@@ -33,7 +33,7 @@
 
 **Автоматизированный перевод журналов Foundry VTT с помощью ИИ**
 
-Этот модуль помогает быстро и качественно переводить **большие приключенческие модули** или длинные тексты в Foundry VTT. Оптимизирован для **PF2e**, но работает независимо от системы.
+Этот модуль помогает быстро и качественно переводить **большие приключенческие модули** или длинные тексты в Foundry VTT. Оптимизирован для **Daggerheart**.
 
 ## 🚀 Ключевые возможности
 
@@ -41,15 +41,15 @@
 - **Пакетный перевод:** Переводите несколько страниц за раз.
 - **Поддержка глоссария:** Автоматически создаёт глоссарий имён и терминов для единообразия перевода.
 - **Умная вставка:** Автоматически находит и извлекает JSON-блок из ответа ИИ.
-- **Интеграция официальных переводов:** Проверяет установленный модуль русского перевода PF2e для обеспечения соответствия официальным терминам.
+- **Интеграция официальных переводов:** Проверяет установленный модуль русского перевода Daggerheart для обеспечения соответствия официальным терминам.
 - **Безопасность:** Автоматически создаёт **резервную копию** журнала перед применением изменений.
 
 ## 📦 Установка
 
 ### Зависимости
 
-Для работы модуля **обязательно** требуется установленный модуль русского перевода PF2e:
-- **pf2e-ru** — модуль русского перевода системы Pathfinder 2e ([GitLab](https://gitlab.com/gnuraco/pf2r))
+Для работы модуля **обязательно** требуется установленный модуль русского перевода Daggerheart:
+- **fvtt-daggerheart-ru** — модуль русского перевода системы Daggerheart ([GitHub](https://github.com/bmpolonsky/fvtt-daggerheart-ru))
 
 ### Установка модуля
 
@@ -58,7 +58,7 @@
 3. Нажмите **Install Module**.
 4. Вставьте **Manifest URL** в поле:
     ```text
-    https://github.com/Toutsu/pf2e-ru-ai-translator/releases/latest/download/module.json
+    https://raw.githubusercontent.com/Toutsu/pf2e-ru-ai-translator/daggerheart/module.json
     ```
 5. Нажмите **Install**.
 
@@ -78,7 +78,7 @@
 2. **Сгенерируйте промпт**: Нажмите **«Проверка грамматики»**.
 3. **Обработка ИИ**: Вставьте в ChatGPT/Claude → Скопируйте ответ (JSON).
 4. **Обновление**: Вставьте в Foundry → **«Обновить журнал»**.
-5. **Разрешение конфликтов**: Если ИИ пытается изменить защищённые термины, появится диалог предупреждения. Вы решаете: сохранить оригинал или принять изменение.
+5. **Разрешение конфликтов**: Если ИИ пытается изменить защищённые термины, появится диалог предупреждения. Вы решаете: сохранить оригинал или принять изменение?
 
 ### 🐛 Известные особенности
 
@@ -107,7 +107,7 @@
 
 **Automated Translation of Foundry VTT Journals with AI**
 
-This module helps you translate **large adventure modules** or long texts in Foundry VTT quickly and consistently. It is optimized for **PF2e** but works system-independently.
+This module helps you translate **large adventure modules** or long texts in Foundry VTT quickly and consistently. It is optimized for **Daggerheart**.
 
 ## 🚀 Key Features
 
@@ -115,15 +115,15 @@ This module helps you translate **large adventure modules** or long texts in Fou
 - **Batch Translation:** Translate multiple pages at once.
 - **Glossary Support:** Automatically generates a glossary of names and terms to ensure consistent translation across pages.
 - **Smart Paste:** Automatically finds and extracts the JSON code block from the AI response.
-- **Official Translation Integration:** Checks the installed Russian Pathfinder 2e system module for existing translations to ensure consistency with official terms.
+- **Official Translation Integration:** Checks the installed Russian Daggerheart module for existing translations to ensure consistency with official terms.
 - **Safety First:** Automatically creates a **Backup** (Copy) of your Journal before applying changes.
 
 ## 📦 Installation
 
 ### Dependencies
 
-This module **requires** the Russian PF2e translation module:
-- **pf2e-ru** — Russian translation module for Pathfinder 2e system ([GitLab](https://gitlab.com/gnuraco/pf2r))
+This module **requires** the Russian Daggerheart translation module:
+- **fvtt-daggerheart-ru** — Russian translation module for Daggerheart system ([GitHub](https://github.com/bmpolonsky/fvtt-daggerheart-ru))
 
 ### Module Installation
 
@@ -132,7 +132,7 @@ This module **requires** the Russian PF2e translation module:
 3. Click **Install Module**.
 4. Paste the following **Manifest URL** into the field:
     ```text
-    https://github.com/Toutsu/pf2e-ru-ai-translator/releases/latest/download/module.json
+    https://raw.githubusercontent.com/Toutsu/pf2e-ru-ai-translator/daggerheart/module.json
     ```
 5. Click **Install**.
 
@@ -164,9 +164,9 @@ This module **requires** the Russian PF2e translation module:
 
 This module is based on [Phil's PF2e AI Translator](https://github.com/PhilsModules/phils-pf2e-ai-translator) by Phil.
 
-## Pathfinder Russian Translation Data
+## Daggerheart Russian Translation Data
 
-This module utilizes data from the Russian Pathfinder 2e translation module.
+This module utilizes data from the Russian Daggerheart translation module ([fvtt-daggerheart-ru](https://github.com/bmpolonsky/fvtt-daggerheart-ru)).
 
 ## Module License
 
